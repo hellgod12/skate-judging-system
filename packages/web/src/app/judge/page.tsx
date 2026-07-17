@@ -43,9 +43,10 @@ export default function JudgePage() {
     try {
       const response = await fetch('/api/tricks');
       const data = await response.json();
-      setTricks(data);
+      setTricks(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch tricks:', error);
+      setTricks([]);
     }
   };
 

@@ -20,12 +20,14 @@ export default function ScoreboardPage() {
     try {
       const response = await fetch(`/api/events/${eventId}/leaderboard`);
       const data = await response.json();
-      setLeaderboard(data);
-      if (data.length > 0 && (!currentRider || data[0].rider_id !== currentRider.rider_id)) {
-        setCurrentRider(data[0]);
+      const leaderboardArray = Array.isArray(data) ? data : [];
+      setLeaderboard(leaderboardArray);
+      if (leaderboardArray.length > 0 && (!currentRider || leaderboardArray[0].rider_id !== currentRider.rider_id)) {
+        setCurrentRider(leaderboardArray[0]);
       }
     } catch (error) {
       console.error('Failed to fetch leaderboard:', error);
+      setLeaderboard([]);
     }
   };
 
