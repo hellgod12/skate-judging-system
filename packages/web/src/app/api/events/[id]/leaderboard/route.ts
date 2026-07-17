@@ -50,9 +50,11 @@ export async function GET(
       );
     }
 
+    const ridersArray = riders || [];
+
     // Calculate leaderboard for each rider
     const leaderboard = await Promise.all(
-      riders.map(async (rider) => {
+      ridersArray.map(async (rider) => {
         // Get all attempts for this rider in this event
         const { data: attempts, error: attemptsError } = await supabase
           .from('attempts')
