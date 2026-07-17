@@ -54,7 +54,7 @@ export default function ScoreboardPage() {
           <div className="text-center mb-12">
             <h2 className="text-8xl font-bold text-neon-blue mb-4">{currentRider.name}</h2>
             <div className="text-9xl font-bold text-neon-green mb-4">
-              {currentRider.final_score.toFixed(2)}
+              {currentRider.final_score?.toFixed(2) || '0.00'}
             </div>
             <p className="text-3xl text-gray-400">Final Score</p>
           </div>
@@ -77,7 +77,7 @@ export default function ScoreboardPage() {
                   <span className={`text-xl ${index === 0 ? 'font-bold' : ''}`}>{entry.name}</span>
                 </div>
                 <span className={`text-3xl font-bold ${index === 0 ? 'text-neon-pink' : 'text-gray-300'}`}>
-                  {entry.final_score.toFixed(2)}
+                  {entry.final_score?.toFixed(2) || '0.00'}
                 </span>
               </div>
             ))}

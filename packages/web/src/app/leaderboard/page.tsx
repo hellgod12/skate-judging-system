@@ -78,9 +78,9 @@ export default function LeaderboardPage() {
                     <td className="p-4 text-right">{entry.best_trick[1]?.toFixed(2) || '-'}</td>
                     <td className="p-4 text-right">{entry.best_trick[2]?.toFixed(2) || '-'}</td>
                     <td className="p-4 text-right">{entry.best_trick[3]?.toFixed(2) || '-'}</td>
-                    <td className="p-4 text-right font-bold text-neon-blue">{entry.best_trick_total.toFixed(2)}</td>
-                    <td className="p-4 text-right">{entry.run_score.toFixed(2)}</td>
-                    <td className="p-4 text-right font-bold text-neon-pink text-xl">{entry.final_score.toFixed(2)}</td>
+                    <td className="p-4 text-right font-bold text-neon-blue">{entry.best_trick_total?.toFixed(2) || '0.00'}</td>
+                    <td className="p-4 text-right">{entry.run_score?.toFixed(2) || '0.00'}</td>
+                    <td className="p-4 text-right font-bold text-neon-pink text-xl">{entry.final_score?.toFixed(2) || '0.00'}</td>
                   </tr>
                 ))}
               </tbody>
