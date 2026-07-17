@@ -59,3 +59,13 @@
 2026-07-17T22:45:57.195074Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@skate-judging/web"), path: AnchoredSystemPathBuf("packages\\web") }}))
 2026-07-17T22:45:57.791037Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages\\web\\package.json"), AnchoredSystemPathBuf(".turbo\\daemon\\94bdc4d98ca8aaa1-turbo.log.2026-07-17")}
 2026-07-17T22:45:57.791056Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("@skate-judging/web"), path: AnchoredSystemPathBuf("packages\\web") }}))
+2026-07-17T22:46:02.894366Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\94bdc4d98ca8aaa1-turbo.log.2026-07-17")}
+2026-07-17T22:46:02.894382Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-07-17T22:46:20.801483Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\94bdc4d98ca8aaa1-turbo.log.2026-07-17")}
+2026-07-17T22:46:20.801497Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-07-17T22:47:59.794605Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("vercel.json")}
+2026-07-17T22:47:59.794623Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-07-17T22:48:04.491180Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("vercel.json")}
+2026-07-17T22:48:04.491199Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-07-17T22:48:05.495639Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2026-07-17T22:48:05.495654Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
