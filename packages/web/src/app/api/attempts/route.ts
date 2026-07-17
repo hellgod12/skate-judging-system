@@ -5,7 +5,7 @@ import {
   calculate_combo_score,
   normalize_to_sls,
   TrickModifiers
-} from '@skate-judging/scoring';
+} from '@/lib/scoring';
 
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || '';

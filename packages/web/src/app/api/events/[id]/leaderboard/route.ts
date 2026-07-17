@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { get_best_trick_total, calculate_final_score } from '@skate-judging/scoring';
+import { get_best_trick_total, calculate_final_score } from '@/lib/scoring';
 
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || '';
