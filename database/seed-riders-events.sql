@@ -1,4 +1,4 @@
--- Seed riders data
+-- Seed riders data (with conflict handling)
 INSERT INTO riders (name, team) VALUES
 ('Nyjah Huston', 'Nike SB'),
 ('Yuto Horigome', 'Nike SB'),
@@ -9,10 +9,12 @@ INSERT INTO riders (name, team) VALUES
 ('Luan Oliveira', 'Nike SB'),
 ('Chris Joslin', 'Plan B'),
 ('Milton Martinez', 'Primitive'),
-('Cory Juneau', 'Powell Peralta');
+('Cory Juneau', 'Powell Peralta')
+ON CONFLICT (name) DO NOTHING;
 
--- Seed events data
+-- Seed events data (with conflict handling)
 INSERT INTO events (name, use_run) VALUES
 ('SLS Championship 2024', false),
 ('Street League Paris 2024', true),
-('World Championship Final', false);
+('World Championship Final', false)
+ON CONFLICT (name) DO NOTHING;
