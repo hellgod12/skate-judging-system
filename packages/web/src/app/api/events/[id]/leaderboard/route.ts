@@ -13,16 +13,21 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  console.log('[events/[id]/leaderboard GET] Entering handler');
+  
   if (!supabase) {
+    console.error('[events/[id]/leaderboard GET] Supabase not configured');
     return NextResponse.json(
-      { error: 'Supabase not configured' },
+      { success: false, error: 'Supabase not configured', file: 'events/[id]/leaderboard/route.ts', line: 17 },
       { status: 500 }
     );
   }
 
   try {
+    console.log('[events/[id]/leaderboard GET] Creating Supabase client');
     const eventId = parseInt(params.id);
 
+    console.log('[events/[id]/leaderboard GET] Reading database (event)');
     // Get event details
     const { data: event, error: eventError } = await supabase
       .from('events')
@@ -31,12 +36,14 @@ export async function GET(
       .single();
 
     if (eventError || !event) {
+      console.error('[events/[id]/leaderboard GET] Event not found:', { eventId, eventError });
       return NextResponse.json(
-        { error: 'Event not found' },
+        { success: false, error: 'Event not found', details: eventError?.message, file: 'events/[id]/leaderboard/route.ts', line: 34 },
         { status: 404 }
       );
     }
 
+    console.log('[events/[id]/leaderboard GET] Reading database (riders)');
     // Get all riders in the event
     const { data: riders, error: ridersError } = await supabase
       .from('riders')
@@ -44,14 +51,16 @@ export async function GET(
       .order('name');
 
     if (ridersError) {
+      console.error('[events/[id]/leaderboard GET] Failed to fetch riders:', ridersError);
       return NextResponse.json(
-        { error: 'Failed to fetch riders' },
+        { success: false, error: 'Failed to fetch riders', details: ridersError.message, file: 'events/[id]/leaderboard/route.ts', line: 48 },
         { status: 500 }
       );
     }
 
     const ridersArray = riders || [];
 
+    console.log('[events/[id]/leaderboard GET] Running scoring calculation');
     // Calculate leaderboard for each rider
     const leaderboard = await Promise.all(
       ridersArray.map(async (rider) => {
@@ -103,10 +112,18 @@ export async function GET(
     // Sort by final score descending
     leaderboard.sort((a, b) => b.final_score - a.final_score);
 
+    console.log('[events/[id]/leaderboard GET] Returning response');
     return NextResponse.json(leaderboard);
-  } catch (error) {
+  } catch (error: any) {
+    console.error('[events/[id]/leaderboard GET] Exception:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        success: false, 
+        error: error.message, 
+        stack: error.stack, 
+        file: 'events/[id]/leaderboard/route.ts',
+        cause: error.cause
+      },
       { status: 500 }
     );
   }

@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
   if (!supabase) {
     console.error('[attempts] Supabase not configured');
     return NextResponse.json(
-      { error: 'Supabase not configured' },
+      { success: false, error: 'Supabase not configured', file: 'attempts/route.ts', line: 31 },
       { status: 500 }
     );
   }
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     if (!rider_id || !event_id || !attempt_no || !attempt) {
       console.error('[attempts] Missing required fields:', { rider_id, event_id, attempt_no, attempt });
       return NextResponse.json(
-        { error: 'Missing required fields', body },
+        { success: false, error: 'Missing required fields', body, file: 'attempts/route.ts', line: 44 },
         { status: 400 }
       );
     }
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       if (trickError || !trick) {
         console.error('[attempts] Trick not found:', { trickName: singleAttempt.trick, trickError });
         return NextResponse.json(
-          { error: 'Trick not found', trickName: singleAttempt.trick, trickError },
+          { success: false, error: 'Trick not found', trickName: singleAttempt.trick, trickError, file: 'attempts/route.ts', line: 66 },
           { status: 404 }
         );
       }
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
         if (trickError || !trickData) {
           console.error('[attempts] Trick not found in combo:', { trickName: trick.name, trickError });
           return NextResponse.json(
-            { error: `Trick not found: ${trick.name}`, trickError },
+            { success: false, error: `Trick not found: ${trick.name}`, trickError, file: 'attempts/route.ts', line: 100 },
             { status: 404 }
           );
         }
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
     } else {
       console.error('[attempts] Invalid attempt type:', attempt.type);
       return NextResponse.json(
-        { error: 'Invalid attempt type', attemptType: attempt.type },
+        { success: false, error: 'Invalid attempt type', attemptType: attempt.type, file: 'attempts/route.ts', line: 122 },
         { status: 400 }
       );
     }
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
     if (insertError) {
       console.error('[attempts] Failed to save attempt:', insertError);
       return NextResponse.json(
-        { error: 'Failed to save attempt', insertError: insertError.message },
+        { success: false, error: 'Failed to save attempt', insertError: insertError.message, file: 'attempts/route.ts', line: 145 },
         { status: 500 }
       );
     }
@@ -157,7 +157,13 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('[attempts] Exception occurred:', error);
     return NextResponse.json(
-      { error: 'Internal server error', message: error.message, stack: error.stack },
+      { 
+        success: false, 
+        error: error.message, 
+        stack: error.stack, 
+        file: 'attempts/route.ts',
+        cause: error.cause
+      },
       { status: 500 }
     );
   }

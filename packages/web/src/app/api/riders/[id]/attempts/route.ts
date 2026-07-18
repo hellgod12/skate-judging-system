@@ -12,18 +12,23 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  console.log('[riders/[id]/attempts GET] Entering handler');
+  
   if (!supabase) {
+    console.error('[riders/[id]/attempts GET] Supabase not configured');
     return NextResponse.json(
-      { error: 'Supabase not configured' },
+      { success: false, error: 'Supabase not configured', file: 'riders/[id]/attempts/route.ts', line: 15 },
       { status: 500 }
     );
   }
 
   try {
+    console.log('[riders/[id]/attempts GET] Creating Supabase client');
     const riderId = parseInt(params.id);
     const { searchParams } = new URL(request.url);
     const eventId = searchParams.get('event_id');
 
+    console.log('[riders/[id]/attempts GET] Reading database');
     let query = supabase
       .from('attempts')
       .select('*')
@@ -38,16 +43,25 @@ export async function GET(
     const { data: attempts, error } = await query;
 
     if (error) {
+      console.error('[riders/[id]/attempts GET] Database error:', error);
       return NextResponse.json(
-        { error: 'Failed to fetch attempts' },
+        { success: false, error: 'Failed to fetch attempts', details: error.message, file: 'riders/[id]/attempts/route.ts', line: 42 },
         { status: 500 }
       );
     }
 
+    console.log('[riders/[id]/attempts GET] Returning response');
     return NextResponse.json(attempts || []);
-  } catch (error) {
+  } catch (error: any) {
+    console.error('[riders/[id]/attempts GET] Exception:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        success: false, 
+        error: error.message, 
+        stack: error.stack, 
+        file: 'riders/[id]/attempts/route.ts',
+        cause: error.cause
+      },
       { status: 500 }
     );
   }
