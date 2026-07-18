@@ -4,15 +4,18 @@ import { createClient } from '@supabase/supabase-js';
 export async function GET() {
   const supabaseUrl = process.env.SUPABASE_URL || '';
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || '';
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
   
   const debugInfo = {
     supabaseUrl: supabaseUrl ? 'SET' : 'NOT SET',
     supabaseServiceKey: supabaseServiceKey ? 'SET' : 'NOT SET',
+    supabaseAnonKey: supabaseAnonKey ? 'SET' : 'NOT SET',
     supabaseUrlLength: supabaseUrl.length,
     serviceKeyLength: supabaseServiceKey.length,
+    anonKeyLength: supabaseAnonKey.length,
   };
 
-  if (!supabaseUrl || !supabaseServiceKey) {
+  if (!supabaseUrl || (!supabaseServiceKey && !supabaseAnonKey)) {
     return NextResponse.json({
       status: 'error',
       message: 'Environment variables not set',
@@ -21,7 +24,7 @@ export async function GET() {
   }
 
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createClient(supabaseUrl, supabaseServiceKey || supabaseAnonKey);
     
     const { data: riders, error } = await supabase
       .from('riders')

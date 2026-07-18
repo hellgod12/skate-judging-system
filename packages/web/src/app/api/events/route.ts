@@ -3,9 +3,11 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-const supabase = supabaseUrl && supabaseServiceKey 
-  ? createClient(supabaseUrl, supabaseServiceKey)
+// Use service key if available, otherwise fall back to anon key (RLS is disabled)
+const supabase = supabaseUrl && (supabaseServiceKey || supabaseAnonKey) 
+  ? createClient(supabaseUrl, supabaseServiceKey || supabaseAnonKey)
   : null;
 
 export async function GET() {
@@ -70,7 +72,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(event);
+    return NextResponse.json(event || {});
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },
