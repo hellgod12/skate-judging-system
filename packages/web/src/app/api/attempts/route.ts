@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (!rider_id || !event_id || !attempt_no || !attempt) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields', body },
         { status: 400 }
       );
     }
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
 
       if (trickError || !trick) {
         return NextResponse.json(
-          { error: 'Trick not found' },
+          { error: 'Trick not found', trickName: singleAttempt.trick, trickError },
           { status: 404 }
         );
       }
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
 
         if (trickError || !trickData) {
           return NextResponse.json(
-            { error: `Trick not found: ${trick.name}` },
+            { error: `Trick not found: ${trick.name}`, trickError },
             { status: 404 }
           );
         }
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
       score = normalize_to_sls(comboRaw);
     } else {
       return NextResponse.json(
-        { error: 'Invalid attempt type' },
+        { error: 'Invalid attempt type', attemptType: attempt.type },
         { status: 400 }
       );
     }
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
 
     if (insertError) {
       return NextResponse.json(
-        { error: 'Failed to save attempt' },
+        { error: 'Failed to save attempt', insertError: insertError.message },
         { status: 500 }
       );
     }
@@ -138,9 +138,9 @@ export async function POST(request: NextRequest) {
       attempt_id: attemptData.id,
       score
     });
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', message: error.message, stack: error.stack },
       { status: 500 }
     );
   }
