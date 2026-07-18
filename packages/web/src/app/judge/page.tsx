@@ -160,14 +160,14 @@ export default function JudgePage() {
           {Object.entries(modifiers).map(([key, value]) => (
             <div key={key} className="mb-4">
               <label className="block text-sm font-medium mb-2 capitalize">
-                {key}: {value.toFixed(2)}
+                {key}: {value?.toFixed(2) || '1.00'}
               </label>
               <input
                 type="range"
                 min={key === 'landing' ? 0.7 : key === 'risk' ? 1.0 : 0.8}
                 max={key === 'risk' ? 1.4 : key === 'amplitude' ? 1.3 : key === 'execution' ? 1.2 : 1.1}
                 step={0.05}
-                value={value}
+                value={value || 1.0}
                 onChange={(e) => handleModifierChange(key as keyof TrickModifiers, parseFloat(e.target.value))}
                 className="w-full"
               />
@@ -202,7 +202,7 @@ export default function JudgePage() {
         {calculatedScore !== null && (
           <div className="mt-8 text-center">
             <h2 className="text-6xl font-bold text-neon-green">
-              {calculatedScore.toFixed(2)}
+              {calculatedScore?.toFixed(2) || '0.00'}
             </h2>
             <p className="text-gray-400 mt-2">SLS Score</p>
           </div>
