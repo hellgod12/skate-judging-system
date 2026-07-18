@@ -26,7 +26,10 @@ interface ComboAttemptInput {
 }
 
 export async function POST(request: NextRequest) {
+  console.log('[attempts] Starting POST request');
+  
   if (!supabase) {
+    console.error('[attempts] Supabase not configured');
     return NextResponse.json(
       { error: 'Supabase not configured' },
       { status: 500 }
@@ -35,9 +38,11 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
+    console.log('[attempts] Request body:', JSON.stringify(body));
     const { rider_id, event_id, attempt_no, attempt } = body;
 
     if (!rider_id || !event_id || !attempt_no || !attempt) {
+      console.error('[attempts] Missing required fields:', { rider_id, event_id, attempt_no, attempt });
       return NextResponse.json(
         { error: 'Missing required fields', body },
         { status: 400 }
@@ -47,6 +52,7 @@ export async function POST(request: NextRequest) {
     let score: number;
 
     if (attempt.type === 'single') {
+      console.log('[attempts] Processing single trick');
       const singleAttempt = attempt as SingleAttemptInput;
       
       // Get trick difficulty from database
@@ -57,12 +63,14 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (trickError || !trick) {
+        console.error('[attempts] Trick not found:', { trickName: singleAttempt.trick, trickError });
         return NextResponse.json(
           { error: 'Trick not found', trickName: singleAttempt.trick, trickError },
           { status: 404 }
         );
       }
 
+      console.log('[attempts] Trick found, calculating score');
       const rawScore = calculate_trick_score(
         trick.difficulty,
         singleAttempt.modifiers.execution,
@@ -72,8 +80,11 @@ export async function POST(request: NextRequest) {
         singleAttempt.modifiers.risk
       );
 
+      console.log('[attempts] Raw score calculated:', rawScore);
       score = normalize_to_sls(rawScore);
+      console.log('[attempts] Normalized score:', score);
     } else if (attempt.type === 'combo') {
+      console.log('[attempts] Processing combo');
       const comboAttempt = attempt as ComboAttemptInput;
       
       const trickScores: number[] = [];
@@ -86,6 +97,7 @@ export async function POST(request: NextRequest) {
           .single();
 
         if (trickError || !trickData) {
+          console.error('[attempts] Trick not found in combo:', { trickName: trick.name, trickError });
           return NextResponse.json(
             { error: `Trick not found: ${trick.name}`, trickError },
             { status: 404 }
@@ -107,12 +119,14 @@ export async function POST(request: NextRequest) {
       const comboRaw = calculate_combo_score(trickScores);
       score = normalize_to_sls(comboRaw);
     } else {
+      console.error('[attempts] Invalid attempt type:', attempt.type);
       return NextResponse.json(
         { error: 'Invalid attempt type', attemptType: attempt.type },
         { status: 400 }
       );
     }
 
+    console.log('[attempts] Saving attempt to database');
     // Save attempt to database
     const { data: attemptData, error: insertError } = await supabase
       .from('attempts')
@@ -128,17 +142,20 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
+      console.error('[attempts] Failed to save attempt:', insertError);
       return NextResponse.json(
         { error: 'Failed to save attempt', insertError: insertError.message },
         { status: 500 }
       );
     }
 
+    console.log('[attempts] Attempt saved successfully');
     return NextResponse.json({
       attempt_id: attemptData.id,
       score
     });
   } catch (error: any) {
+    console.error('[attempts] Exception occurred:', error);
     return NextResponse.json(
       { error: 'Internal server error', message: error.message, stack: error.stack },
       { status: 500 }
