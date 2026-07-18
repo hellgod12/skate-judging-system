@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function DebugAttemptsPage() {
   const [result, setResult] = useState<any>(null);
@@ -37,6 +37,11 @@ export default function DebugAttemptsPage() {
     setLoading(false);
   };
 
+  // Auto-test on page load
+  useEffect(() => {
+    testDebugEndpoint();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
       <div className="max-w-4xl mx-auto">
@@ -53,7 +58,7 @@ export default function DebugAttemptsPage() {
         {result && (
           <div className="bg-gray-800 rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Result:</h2>
-            <pre className="bg-gray-900 p-4 rounded overflow-auto">
+            <pre className="bg-gray-900 p-4 rounded overflow-auto text-sm">
               {JSON.stringify(result, null, 2)}
             </pre>
           </div>
