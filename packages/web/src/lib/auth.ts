@@ -6,11 +6,15 @@ export class AuthService {
    * Login user with email and password
    */
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    console.log("LOGIN FUNCTION START");
     try {
+      console.log("CALLING SUPABASE AUTH");
       const { data, error } = await supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password,
       });
+
+      console.log("SIGN IN WITH PASSWORD RESPONSE:", { data, error });
 
       if (error) {
         throw new Error(error.message);
