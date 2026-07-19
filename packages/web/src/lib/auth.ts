@@ -21,14 +21,43 @@ export class AuthService {
       }
 
       // Fetch user profile from database
-      const { data: userProfile, error: profileError } = await supabase
+      let userProfile;
+      let profileError;
+
+      const { data: existingProfile, error: fetchError } = await supabase
         .from('users')
         .select('*')
         .eq('id', data.user.id)
-        .single();
+        .maybeSingle();
 
-      if (profileError) {
-        throw new Error('Failed to fetch user profile');
+      if (fetchError) {
+        throw new Error(`Failed to fetch user profile: ${fetchError.message}`);
+      }
+
+      // If profile doesn't exist, create it automatically
+      if (!existingProfile) {
+        const { data: newProfile, error: createError } = await supabase
+          .from('users')
+          .insert({
+            id: data.user.id,
+            email: data.user.email || '',
+            password_hash: '', // Hashed by Supabase
+            first_name: data.user.user_metadata?.first_name || '',
+            last_name: data.user.user_metadata?.last_name || '',
+            display_name: data.user.user_metadata?.display_name || data.user.user_metadata?.full_name || '',
+            is_active: true,
+            is_verified: data.user.email_confirmed_at != null,
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          throw new Error(`Failed to create user profile: ${createError.message}`);
+        }
+
+        userProfile = newProfile;
+      } else {
+        userProfile = existingProfile;
       }
 
       return {
@@ -152,11 +181,44 @@ export class AuthService {
         throw new Error('Token refresh failed');
       }
 
-      const { data: userProfile } = await supabase
+      // Fetch user profile from database
+      let userProfile;
+
+      const { data: existingProfile, error: fetchError } = await supabase
         .from('users')
         .select('*')
         .eq('id', data.user.id)
-        .single();
+        .maybeSingle();
+
+      if (fetchError) {
+        throw new Error(`Failed to fetch user profile: ${fetchError.message}`);
+      }
+
+      // If profile doesn't exist, create it automatically
+      if (!existingProfile) {
+        const { data: newProfile, error: createError } = await supabase
+          .from('users')
+          .insert({
+            id: data.user.id,
+            email: data.user.email || '',
+            password_hash: '', // Hashed by Supabase
+            first_name: data.user.user_metadata?.first_name || '',
+            last_name: data.user.user_metadata?.last_name || '',
+            display_name: data.user.user_metadata?.display_name || data.user.user_metadata?.full_name || '',
+            is_active: true,
+            is_verified: data.user.email_confirmed_at != null,
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          throw new Error(`Failed to create user profile: ${createError.message}`);
+        }
+
+        userProfile = newProfile;
+      } else {
+        userProfile = existingProfile;
+      }
 
       return {
         user: userProfile as User,
@@ -217,11 +279,46 @@ export class AuthService {
         return null;
       }
 
-      const { data: userProfile } = await supabase
+      // Fetch user profile from database
+      let userProfile;
+
+      const { data: existingProfile, error: fetchError } = await supabase
         .from('users')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
+
+      if (fetchError) {
+        console.error('Failed to fetch user profile:', fetchError);
+        return null;
+      }
+
+      // If profile doesn't exist, create it automatically
+      if (!existingProfile) {
+        const { data: newProfile, error: createError } = await supabase
+          .from('users')
+          .insert({
+            id: user.id,
+            email: user.email || '',
+            password_hash: '', // Hashed by Supabase
+            first_name: user.user_metadata?.first_name || '',
+            last_name: user.user_metadata?.last_name || '',
+            display_name: user.user_metadata?.display_name || user.user_metadata?.full_name || '',
+            is_active: true,
+            is_verified: user.email_confirmed_at != null,
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Failed to create user profile:', createError);
+          return null;
+        }
+
+        userProfile = newProfile;
+      } else {
+        userProfile = existingProfile;
+      }
 
       return userProfile as User;
     } catch (error) {
