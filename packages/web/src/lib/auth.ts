@@ -36,25 +36,42 @@ export class AuthService {
 
       // If profile doesn't exist, create it automatically
       if (!existingProfile) {
+        console.log("=== CREATE USER PROFILE (LOGIN) ===");
+        console.log("Auth user id:", data.user.id);
+        console.log("Auth user email:", data.user.email);
+        console.log("Auth user metadata:", data.user.user_metadata);
+
+        const insertPayload = {
+          id: data.user.id,
+          email: data.user.email || '',
+          password_hash: '', // Hashed by Supabase
+          first_name: data.user.user_metadata?.first_name || '',
+          last_name: data.user.user_metadata?.last_name || '',
+          display_name: data.user.user_metadata?.display_name || data.user.user_metadata?.full_name || '',
+          is_active: true,
+          is_verified: data.user.email_confirmed_at != null,
+        };
+
+        console.log("Insert payload:", insertPayload);
+
         const { data: newProfile, error: createError } = await supabase
           .from('users')
-          .insert({
-            id: data.user.id,
-            email: data.user.email || '',
-            password_hash: '', // Hashed by Supabase
-            first_name: data.user.user_metadata?.first_name || '',
-            last_name: data.user.user_metadata?.last_name || '',
-            display_name: data.user.user_metadata?.display_name || data.user.user_metadata?.full_name || '',
-            is_active: true,
-            is_verified: data.user.email_confirmed_at != null,
-          })
+          .insert(insertPayload)
           .select()
           .single();
 
         if (createError) {
-          throw new Error(`Failed to create user profile: ${createError.message}`);
+          console.log("=== CREATE PROFILE ERROR (LOGIN) ===");
+          console.log("Error object:", createError);
+          console.log("Error JSON:", JSON.stringify(createError, null, 2));
+          console.log("Error code:", createError.code);
+          console.log("Error message:", createError.message);
+          console.log("Error details:", createError.details);
+          console.log("Error hint:", createError.hint);
+          throw new Error(`Failed to create user profile: ${createError.message} (Code: ${createError.code})`);
         }
 
+        console.log("Profile created successfully:", newProfile);
         userProfile = newProfile;
       } else {
         userProfile = existingProfile;
@@ -295,26 +312,43 @@ export class AuthService {
 
       // If profile doesn't exist, create it automatically
       if (!existingProfile) {
+        console.log("=== CREATE USER PROFILE (GET CURRENT USER) ===");
+        console.log("Auth user id:", user.id);
+        console.log("Auth user email:", user.email);
+        console.log("Auth user metadata:", user.user_metadata);
+
+        const insertPayload = {
+          id: user.id,
+          email: user.email || '',
+          password_hash: '', // Hashed by Supabase
+          first_name: user.user_metadata?.first_name || '',
+          last_name: user.user_metadata?.last_name || '',
+          display_name: user.user_metadata?.display_name || user.user_metadata?.full_name || '',
+          is_active: true,
+          is_verified: user.email_confirmed_at != null,
+        };
+
+        console.log("Insert payload:", insertPayload);
+
         const { data: newProfile, error: createError } = await supabase
           .from('users')
-          .insert({
-            id: user.id,
-            email: user.email || '',
-            password_hash: '', // Hashed by Supabase
-            first_name: user.user_metadata?.first_name || '',
-            last_name: user.user_metadata?.last_name || '',
-            display_name: user.user_metadata?.display_name || user.user_metadata?.full_name || '',
-            is_active: true,
-            is_verified: user.email_confirmed_at != null,
-          })
+          .insert(insertPayload)
           .select()
           .single();
 
         if (createError) {
+          console.log("=== CREATE PROFILE ERROR (GET CURRENT USER) ===");
+          console.log("Error object:", createError);
+          console.log("Error JSON:", JSON.stringify(createError, null, 2));
+          console.log("Error code:", createError.code);
+          console.log("Error message:", createError.message);
+          console.log("Error details:", createError.details);
+          console.log("Error hint:", createError.hint);
           console.error('Failed to create user profile:', createError);
           return null;
         }
 
+        console.log("Profile created successfully:", newProfile);
         userProfile = newProfile;
       } else {
         userProfile = existingProfile;
