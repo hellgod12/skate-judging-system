@@ -1,51 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { RiderService } from '@/lib/rider';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-
-const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
-
-export async function GET() {
-  console.log('[riders GET] Entering handler');
-  
-  if (!supabase) {
-    console.error('[riders GET] Supabase not configured');
-    return NextResponse.json(
-      { success: false, error: 'Supabase not configured', file: 'riders/route.ts', line: 13 },
-      { status: 500 }
-    );
-  }
-
+export async function GET(request: NextRequest) {
   try {
-    console.log('[riders GET] Creating Supabase client');
-    console.log('[riders GET] Reading database');
-    const { data: riders, error } = await supabase
-      .from('riders')
-      .select('*')
-      .order('name');
+    const { searchParams } = new URL(request.url);
+    const organizationId = searchParams.get('organization_id') || undefined;
+    const searchQuery = searchParams.get('search') || undefined;
+    const categoryId = searchParams.get('category_id') || undefined;
+    const divisionId = searchParams.get('division_id') || undefined;
 
-    if (error) {
-      console.error('[riders GET] Database error:', error);
-      return NextResponse.json(
-        { success: false, error: 'Failed to fetch riders', details: error.message, file: 'riders/route.ts', line: 26 },
-        { status: 500 }
-      );
+    if (searchQuery) {
+      const riders = await RiderService.searchRiders(searchQuery, organizationId);
+      return NextResponse.json({
+        success: true,
+        data: riders,
+      });
     }
 
-    console.log('[riders GET] Returning response');
-    return NextResponse.json(riders || []);
-  } catch (error: any) {
-    console.error('[riders GET] Exception:', error);
+    if (categoryId) {
+      const riders = await RiderService.getRidersByCategory(categoryId);
+      return NextResponse.json({
+        success: true,
+        data: riders,
+      });
+    }
+
+    if (divisionId) {
+      const riders = await RiderService.getRidersByDivision(divisionId);
+      return NextResponse.json({
+        success: true,
+        data: riders,
+      });
+    }
+
+    const riders = await RiderService.getRiders(organizationId);
+
+    return NextResponse.json({
+      success: true,
+      data: riders,
+    });
+  } catch (error) {
+    console.error('Get riders error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error.message, 
-        stack: error.stack, 
-        file: 'riders/route.ts',
-        cause: error.cause
+      {
+        success: false,
+        error: {
+          code: 'GET_RIDERS_ERROR',
+          message: error instanceof Error ? error.message : 'Failed to get riders',
+        },
       },
       { status: 500 }
     );
@@ -53,55 +55,23 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('[riders POST] Entering handler');
-  
-  if (!supabase) {
-    console.error('[riders POST] Supabase not configured');
-    return NextResponse.json(
-      { success: false, error: 'Supabase not configured', file: 'riders/route.ts', line: 43 },
-      { status: 500 }
-    );
-  }
-
   try {
-    console.log('[riders POST] Reading request body');
     const body = await request.json();
-    const { name, team } = body;
+    const rider = await RiderService.createRider(body);
 
-    console.log('[riders POST] Validating payload');
-    if (!name) {
-      return NextResponse.json(
-        { success: false, error: 'Name is required', file: 'riders/route.ts', line: 55 },
-        { status: 400 }
-      );
-    }
-
-    console.log('[riders POST] Writing database');
-    const { data: riders, error } = await supabase
-      .from('riders')
-      .insert({ name, team })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('[riders POST] Database error:', error);
-      return NextResponse.json(
-        { success: false, error: 'Failed to create rider', details: error.message, file: 'riders/route.ts', line: 68 },
-        { status: 500 }
-      );
-    }
-
-    console.log('[riders POST] Returning response');
-    return NextResponse.json(riders || {});
-  } catch (error: any) {
-    console.error('[riders POST] Exception:', error);
+    return NextResponse.json({
+      success: true,
+      data: rider,
+    });
+  } catch (error) {
+    console.error('Create rider error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error.message, 
-        stack: error.stack, 
-        file: 'riders/route.ts',
-        cause: error.cause
+      {
+        success: false,
+        error: {
+          code: 'CREATE_RIDER_ERROR',
+          message: error instanceof Error ? error.message : 'Failed to create rider',
+        },
       },
       { status: 500 }
     );
