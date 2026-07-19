@@ -2141,241 +2141,312 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Apply updated_at trigger to all tables with updated_at
+DROP TRIGGER IF EXISTS update_organizations_updated_at ON organizations;
 CREATE TRIGGER update_organizations_updated_at BEFORE UPDATE ON organizations
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_users_updated_at ON users;
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_roles_updated_at ON roles;
 CREATE TRIGGER update_roles_updated_at BEFORE UPDATE ON roles
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_venues_updated_at ON venues;
 CREATE TRIGGER update_venues_updated_at BEFORE UPDATE ON venues
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_events_updated_at ON events;
 CREATE TRIGGER update_events_updated_at BEFORE UPDATE ON events
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_competition_rounds_updated_at ON competition_rounds;
 CREATE TRIGGER update_competition_rounds_updated_at BEFORE UPDATE ON competition_rounds
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_heats_updated_at ON heats;
 CREATE TRIGGER update_heats_updated_at BEFORE UPDATE ON heats
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_categories_updated_at ON categories;
 CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_divisions_updated_at ON divisions;
 CREATE TRIGGER update_divisions_updated_at BEFORE UPDATE ON divisions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_riders_updated_at ON riders;
 CREATE TRIGGER update_riders_updated_at BEFORE UPDATE ON riders
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_rider_profiles_updated_at ON rider_profiles;
 CREATE TRIGGER update_rider_profiles_updated_at BEFORE UPDATE ON rider_profiles
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_judges_updated_at ON judges;
 CREATE TRIGGER update_judges_updated_at BEFORE UPDATE ON judges
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_operators_updated_at ON operators;
 CREATE TRIGGER update_operators_updated_at BEFORE UPDATE ON operators
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_event_staff_updated_at ON event_staff;
 CREATE TRIGGER update_event_staff_updated_at BEFORE UPDATE ON event_staff
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_judge_sessions_updated_at ON judge_sessions;
 CREATE TRIGGER update_judge_sessions_updated_at BEFORE UPDATE ON judge_sessions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_operator_sessions_updated_at ON operator_sessions;
 CREATE TRIGGER update_operator_sessions_updated_at BEFORE UPDATE ON operator_sessions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_timers_updated_at ON timers;
 CREATE TRIGGER update_timers_updated_at BEFORE UPDATE ON timers
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_sponsors_updated_at ON sponsors;
 CREATE TRIGGER update_sponsors_updated_at BEFORE UPDATE ON sponsors
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_event_sponsors_updated_at ON event_sponsors;
 CREATE TRIGGER update_event_sponsors_updated_at BEFORE UPDATE ON event_sponsors
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_event_branding_updated_at ON event_branding;
 CREATE TRIGGER update_event_branding_updated_at BEFORE UPDATE ON event_branding
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_event_assets_updated_at ON event_assets;
 CREATE TRIGGER update_event_assets_updated_at BEFORE UPDATE ON event_assets
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_scoring_settings_updated_at ON scoring_settings;
 CREATE TRIGGER update_scoring_settings_updated_at BEFORE UPDATE ON scoring_settings
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_score_formulas_updated_at ON score_formulas;
 CREATE TRIGGER update_score_formulas_updated_at BEFORE UPDATE ON score_formulas
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_trick_categories_updated_at ON trick_categories;
 CREATE TRIGGER update_trick_categories_updated_at BEFORE UPDATE ON trick_categories
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_tricks_updated_at ON tricks;
 CREATE TRIGGER update_tricks_updated_at BEFORE UPDATE ON tricks
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_trick_variants_updated_at ON trick_variants;
 CREATE TRIGGER update_trick_variants_updated_at BEFORE UPDATE ON trick_variants
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_attempts_updated_at ON attempts;
 CREATE TRIGGER update_attempts_updated_at BEFORE UPDATE ON attempts
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_combo_attempts_updated_at ON combo_attempts;
 CREATE TRIGGER update_combo_attempts_updated_at BEFORE UPDATE ON combo_attempts
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_runs_updated_at ON runs;
 CREATE TRIGGER update_runs_updated_at BEFORE UPDATE ON runs
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_run_attempts_updated_at ON run_attempts;
 CREATE TRIGGER update_run_attempts_updated_at BEFORE UPDATE ON run_attempts
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_best_trick_attempts_updated_at ON best_trick_attempts;
 CREATE TRIGGER update_best_trick_attempts_updated_at BEFORE UPDATE ON best_trick_attempts
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_judge_scores_updated_at ON judge_scores;
 CREATE TRIGGER update_judge_scores_updated_at BEFORE UPDATE ON judge_scores
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_overall_scores_updated_at ON overall_scores;
 CREATE TRIGGER update_overall_scores_updated_at BEFORE UPDATE ON overall_scores
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_penalties_updated_at ON penalties;
 CREATE TRIGGER update_penalties_updated_at BEFORE UPDATE ON penalties
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_announcements_updated_at ON announcements;
 CREATE TRIGGER update_announcements_updated_at BEFORE UPDATE ON announcements
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_display_settings_updated_at ON display_settings;
 CREATE TRIGGER update_display_settings_updated_at BEFORE UPDATE ON display_settings
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_obs_layouts_updated_at ON obs_layouts;
 CREATE TRIGGER update_obs_layouts_updated_at BEFORE UPDATE ON obs_layouts
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_screen_layouts_updated_at ON screen_layouts;
 CREATE TRIGGER update_screen_layouts_updated_at BEFORE UPDATE ON screen_layouts
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_themes_updated_at ON themes;
 CREATE TRIGGER update_themes_updated_at BEFORE UPDATE ON themes
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_system_settings_updated_at ON system_settings;
 CREATE TRIGGER update_system_settings_updated_at BEFORE UPDATE ON system_settings
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_archived_events_updated_at ON archived_events;
 CREATE TRIGGER update_archived_events_updated_at BEFORE UPDATE ON archived_events
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_activity_logs_updated_at ON activity_logs;
 CREATE TRIGGER update_activity_logs_updated_at BEFORE UPDATE ON activity_logs
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Additional triggers for tables with updated_at that were missing
+DROP TRIGGER IF EXISTS update_competition_templates_updated_at ON competition_templates;
 CREATE TRIGGER update_competition_templates_updated_at BEFORE UPDATE ON competition_templates
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_workflow_definitions_updated_at ON workflow_definitions;
 CREATE TRIGGER update_workflow_definitions_updated_at BEFORE UPDATE ON workflow_definitions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_workflow_executions_updated_at ON workflow_executions;
 CREATE TRIGGER update_workflow_executions_updated_at BEFORE UPDATE ON workflow_executions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_schedules_updated_at ON schedules;
 CREATE TRIGGER update_schedules_updated_at BEFORE UPDATE ON schedules
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_schedule_items_updated_at ON schedule_items;
 CREATE TRIGGER update_schedule_items_updated_at BEFORE UPDATE ON schedule_items
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_schedule_constraints_updated_at ON schedule_constraints;
 CREATE TRIGGER update_schedule_constraints_updated_at BEFORE UPDATE ON schedule_constraints
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_schedule_dependencies_updated_at ON schedule_dependencies;
 CREATE TRIGGER update_schedule_dependencies_updated_at BEFORE UPDATE ON schedule_dependencies
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_run_attempts_updated_at BEFORE UPDATE ON run_attempts
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_best_trick_attempts_updated_at BEFORE UPDATE ON best_trick_attempts
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
+DROP TRIGGER IF EXISTS update_layout_versions_updated_at ON layout_versions;
 CREATE TRIGGER update_layout_versions_updated_at BEFORE UPDATE ON layout_versions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_layout_breakpoints_updated_at ON layout_breakpoints;
 CREATE TRIGGER update_layout_breakpoints_updated_at BEFORE UPDATE ON layout_breakpoints
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_layout_validations_updated_at ON layout_validations;
 CREATE TRIGGER update_layout_validations_updated_at BEFORE UPDATE ON layout_validations
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_animation_library_updated_at ON animation_library;
 CREATE TRIGGER update_animation_library_updated_at BEFORE UPDATE ON animation_library
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_animation_timelines_updated_at ON animation_timelines;
 CREATE TRIGGER update_animation_timelines_updated_at BEFORE UPDATE ON animation_timelines
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_animation_templates_updated_at ON animation_templates;
 CREATE TRIGGER update_animation_templates_updated_at BEFORE UPDATE ON animation_templates
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_audio_library_updated_at ON audio_library;
 CREATE TRIGGER update_audio_library_updated_at BEFORE UPDATE ON audio_library
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_audio_playlists_updated_at ON audio_playlists;
 CREATE TRIGGER update_audio_playlists_updated_at BEFORE UPDATE ON audio_playlists
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_audio_cues_updated_at ON audio_cues;
 CREATE TRIGGER update_audio_cues_updated_at BEFORE UPDATE ON audio_cues
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_audio_levels_updated_at ON audio_levels;
 CREATE TRIGGER update_audio_levels_updated_at BEFORE UPDATE ON audio_levels
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_audio_sync_updated_at ON audio_sync;
 CREATE TRIGGER update_audio_sync_updated_at BEFORE UPDATE ON audio_sync
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_media_library_updated_at ON media_library;
 CREATE TRIGGER update_media_library_updated_at BEFORE UPDATE ON media_library
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_plugins_updated_at ON plugins;
 CREATE TRIGGER update_plugins_updated_at BEFORE UPDATE ON plugins
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_plugin_hooks_updated_at ON plugin_hooks;
 CREATE TRIGGER update_plugin_hooks_updated_at BEFORE UPDATE ON plugin_hooks
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_plugin_extensions_updated_at ON plugin_extensions;
 CREATE TRIGGER update_plugin_extensions_updated_at BEFORE UPDATE ON plugin_extensions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_plugin_permissions_updated_at ON plugin_permissions;
 CREATE TRIGGER update_plugin_permissions_updated_at BEFORE UPDATE ON plugin_permissions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_plugin_marketplace_updated_at ON plugin_marketplace;
 CREATE TRIGGER update_plugin_marketplace_updated_at BEFORE UPDATE ON plugin_marketplace
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_translations_updated_at ON translations;
 CREATE TRIGGER update_translations_updated_at BEFORE UPDATE ON translations
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_translation_keys_updated_at ON translation_keys;
 CREATE TRIGGER update_translation_keys_updated_at BEFORE UPDATE ON translation_keys
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_locales_updated_at ON locales;
 CREATE TRIGGER update_locales_updated_at BEFORE UPDATE ON locales
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_currency_localization_updated_at ON currency_localization;
 CREATE TRIGGER update_currency_localization_updated_at BEFORE UPDATE ON currency_localization
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_date_formats_updated_at ON date_formats;
 CREATE TRIGGER update_date_formats_updated_at BEFORE UPDATE ON date_formats
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_domain_mappings_updated_at ON domain_mappings;
 CREATE TRIGGER update_domain_mappings_updated_at BEFORE UPDATE ON domain_mappings
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_custom_domains_updated_at ON custom_domains;
 CREATE TRIGGER update_custom_domains_updated_at BEFORE UPDATE ON custom_domains
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_organization_branding_updated_at ON organization_branding;
 CREATE TRIGGER update_organization_branding_updated_at BEFORE UPDATE ON organization_branding
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_branding_templates_updated_at ON branding_templates;
 CREATE TRIGGER update_branding_templates_updated_at BEFORE UPDATE ON branding_templates
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_branding_versions_updated_at ON branding_versions;
 CREATE TRIGGER update_branding_versions_updated_at BEFORE UPDATE ON branding_versions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_languages_updated_at ON languages;
 CREATE TRIGGER update_languages_updated_at BEFORE UPDATE ON languages
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
