@@ -10,6 +10,7 @@ let supabaseInstance: ReturnType<typeof createClient> | null = null
 
 export const getSupabase = () => {
   if (!supabaseInstance) {
+    console.log("SUPABASE CLIENT - Creating new instance");
     if (!supabaseUrl || !supabaseAnonKey) {
       if (isBuildTime) {
         // Return a mock client during build
@@ -18,6 +19,7 @@ export const getSupabase = () => {
       throw new Error('Missing Supabase environment variables')
     }
     supabaseInstance = createClient(supabaseUrl, supabaseAnonKey)
+    console.log("SUPABASE CLIENT - Instance created");
   }
   return supabaseInstance
 }

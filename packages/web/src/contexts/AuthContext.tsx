@@ -22,19 +22,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   useEffect(() => {
+    console.log("AUTH PROVIDER - useEffect calling checkAuth");
     checkAuth();
   }, []);
 
   const checkAuth = async () => {
+    console.log("AUTH PROVIDER - checkAuth START");
     try {
       const user = await AuthService.getCurrentUser();
+      console.log("AUTH PROVIDER - checkAuth result:", user);
       setState({
         user,
         isAuthenticated: !!user,
         isLoading: false,
         error: null,
       });
+      console.log("AUTH PROVIDER - checkAuth state updated");
     } catch (error) {
+      console.log("AUTH PROVIDER - checkAuth error:", error);
       setState({
         user: null,
         isAuthenticated: false,
@@ -45,16 +50,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const login = async (email: string, password: string) => {
+    console.log("AUTH PROVIDER - login START");
     setState({ ...state, isLoading: true, error: null });
     try {
+      console.log("AUTH PROVIDER - calling AuthService.login");
       const response = await AuthService.login({ email, password });
+      console.log("AUTH PROVIDER - AuthService.login response:", response);
       setState({
         user: response.user,
         isAuthenticated: true,
         isLoading: false,
         error: null,
       });
+      console.log("AUTH PROVIDER - login state updated");
     } catch (error) {
+      console.log("AUTH PROVIDER - login error:", error);
       setState({
         user: null,
         isAuthenticated: false,

@@ -24,11 +24,16 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
+      console.log("LOGIN PAGE - Calling login function");
       await login(email, password);
+      console.log("LOGIN PAGE - Login successful, redirecting to dashboard");
       router.push('/dashboard');
+      console.log("LOGIN PAGE - router.push called");
     } catch (err) {
+      console.log("LOGIN PAGE - Login error:", err);
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
+      console.log("LOGIN PAGE - Finally block, setting isLoading false");
       setIsLoading(false);
     }
   };

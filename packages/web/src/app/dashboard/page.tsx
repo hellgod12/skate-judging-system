@@ -5,9 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated, isLoading } = useAuth();
+
+  console.log("DASHBOARD PAGE - Render");
+  console.log("DASHBOARD PAGE - user:", user);
+  console.log("DASHBOARD PAGE - isAuthenticated:", isAuthenticated);
+  console.log("DASHBOARD PAGE - isLoading:", isLoading);
 
   const handleLogout = async () => {
+    console.log("DASHBOARD PAGE - Logout clicked");
     await logout();
   };
 
