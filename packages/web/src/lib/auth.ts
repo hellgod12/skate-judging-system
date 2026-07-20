@@ -15,71 +15,104 @@ export class AuthService {
       });
 
       console.log("SIGN IN WITH PASSWORD RESPONSE:", { data, error });
+      console.log("A");
 
       if (error) {
+        console.log("A1 - Error detected:", error);
         throw new Error(error.message);
       }
 
+      console.log("B");
+      console.log("USER ID:", data.user?.id);
+      console.log("SESSION:", data.session);
+
       if (!data.user || !data.session) {
+        console.log("B1 - Missing user or session");
         throw new Error('Login failed');
       }
+
+      console.log("C");
 
       // Fetch user profile from database
       let userProfile;
       let profileError;
 
-      const { data: existingProfile, error: fetchError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', data.user.id)
-        .maybeSingle();
-
-      if (fetchError) {
-        throw new Error(`Failed to fetch user profile: ${fetchError.message}`);
-      }
-
-      // If profile doesn't exist, create it automatically
-      if (!existingProfile) {
-        console.log("=== CREATE USER PROFILE (LOGIN) ===");
-        console.log("Auth user id:", data.user.id);
-        console.log("Auth user email:", data.user.email);
-        console.log("Auth user metadata:", data.user.user_metadata);
-
-        const insertPayload = {
-          id: data.user.id,
-          email: data.user.email || '',
-          password_hash: '', // Hashed by Supabase
-          first_name: data.user.user_metadata?.first_name || '',
-          last_name: data.user.user_metadata?.last_name || '',
-          display_name: data.user.user_metadata?.display_name || data.user.user_metadata?.full_name || '',
-          is_active: true,
-          is_verified: data.user.email_confirmed_at != null,
-        };
-
-        console.log("Insert payload:", insertPayload);
-
-        const { data: newProfile, error: createError } = await supabase
+      try {
+        console.log("C1 - Fetching existing profile");
+        const { data: existingProfile, error: fetchError } = await supabase
           .from('users')
-          .insert(insertPayload)
-          .select()
-          .single();
+          .select('*')
+          .eq('id', data.user.id)
+          .maybeSingle();
 
-        if (createError) {
-          console.log("=== CREATE PROFILE ERROR (LOGIN) ===");
-          console.log("Error object:", createError);
-          console.log("Error JSON:", JSON.stringify(createError, null, 2));
-          console.log("Error code:", createError.code);
-          console.log("Error message:", createError.message);
-          console.log("Error details:", createError.details);
-          console.log("Error hint:", createError.hint);
-          throw new Error(`Failed to create user profile: ${createError.message} (Code: ${createError.code})`);
+        console.log("C2 - Fetch result:", { existingProfile, fetchError });
+        console.log("D");
+
+        if (fetchError) {
+          console.log("D1 - Fetch error:", fetchError);
+          throw new Error(`Failed to fetch user profile: ${fetchError.message}`);
         }
 
-        console.log("Profile created successfully:", newProfile);
-        userProfile = newProfile;
-      } else {
-        userProfile = existingProfile;
+        // If profile doesn't exist, create it automatically
+        if (!existingProfile) {
+          console.log("E - Profile does not exist, creating new profile");
+          console.log("=== CREATE USER PROFILE (LOGIN) ===");
+          console.log("Auth user id:", data.user.id);
+          console.log("Auth user email:", data.user.email);
+          console.log("Auth user metadata:", data.user.user_metadata);
+
+          const insertPayload = {
+            id: data.user.id,
+            email: data.user.email || '',
+            password_hash: '', // Hashed by Supabase
+            first_name: data.user.user_metadata?.first_name || '',
+            last_name: data.user.user_metadata?.last_name || '',
+            display_name: data.user.user_metadata?.display_name || data.user.user_metadata?.full_name || '',
+            is_active: true,
+            is_verified: data.user.email_confirmed_at != null,
+          };
+
+          console.log("Insert payload:", insertPayload);
+
+          try {
+            console.log("E1 - Inserting profile");
+            const { data: newProfile, error: createError } = await supabase
+              .from('users')
+              .insert(insertPayload)
+              .select()
+              .single();
+
+            console.log("E2 - Insert result:", { newProfile, createError });
+            console.log("F");
+
+            if (createError) {
+              console.log("=== CREATE PROFILE ERROR (LOGIN) ===");
+              console.log("Error object:", createError);
+              console.log("Error JSON:", JSON.stringify(createError, null, 2));
+              console.log("Error code:", createError.code);
+              console.log("Error message:", createError.message);
+              console.log("Error details:", createError.details);
+              console.log("Error hint:", createError.hint);
+              throw new Error(`Failed to create user profile: ${createError.message} (Code: ${createError.code})`);
+            }
+
+            console.log("Profile created successfully:", newProfile);
+            userProfile = newProfile;
+          } catch (insertError) {
+            console.log("E3 - Insert catch block:", insertError);
+            throw insertError;
+          }
+        } else {
+          console.log("E - Profile exists, using existing profile");
+          userProfile = existingProfile;
+        }
+      } catch (fetchCatchError) {
+        console.log("C3 - Fetch catch block:", fetchCatchError);
+        throw fetchCatchError;
       }
+
+      console.log("G");
+      console.log("Returning auth response");
 
       return {
         user: userProfile as User,
