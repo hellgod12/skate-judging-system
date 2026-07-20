@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
+  console.log("MIDDLEWARE EXECUTED", req.nextUrl.pathname);
   console.log("MIDDLEWARE - START", req.nextUrl.pathname);
   console.log("MIDDLEWARE - Method:", req.method);
   console.log("MIDDLEWARE - Headers:", Object.fromEntries(req.headers.entries()));

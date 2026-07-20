@@ -28,9 +28,9 @@ export default function LoginPage() {
       await login(email, password);
       console.log("LOGIN PAGE - Login successful, redirecting to dashboard");
       console.log("LOGIN PAGE - Current pathname:", window.location.pathname);
-      console.log("LOGIN PAGE - Using window.location.href instead of router.push");
-      window.location.href = '/dashboard';
-      console.log("LOGIN PAGE - window.location.href called");
+      console.log("LOGIN PAGE - Using window.location.replace");
+      window.location.replace('/dashboard');
+      console.log("LOGIN PAGE - window.location.replace called");
     } catch (err) {
       console.log("LOGIN PAGE - Login error:", err);
       setError(err instanceof Error ? err.message : 'Login failed');
