@@ -18,8 +18,16 @@ export const getSupabase = () => {
       }
       throw new Error('Missing Supabase environment variables')
     }
-    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey)
-    console.log("SUPABASE CLIENT - Instance created");
+    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+        storageKey: 'sb-skate-judging-auth-token',
+      }
+    })
+    console.log("SUPABASE CLIENT - Instance created with auth options");
   }
   return supabaseInstance
 }

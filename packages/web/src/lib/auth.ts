@@ -26,6 +26,19 @@ export class AuthService {
       console.log("USER ID:", data.user?.id);
       console.log("SESSION:", data.session);
 
+      // Log localStorage keys beginning with "sb-"
+      if (typeof window !== 'undefined') {
+        const sbKeys = Object.keys(localStorage).filter(key => key.startsWith('sb-'));
+        console.log("LOCALSTORAGE SB-KEYS:", sbKeys);
+        sbKeys.forEach(key => {
+          console.log(`LOCALSTORAGE ${key}:`, localStorage.getItem(key));
+        });
+      }
+
+      // Verify session is persisted by calling getSession immediately
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      console.log("GET SESSION AFTER LOGIN:", { sessionData, sessionError });
+
       if (!data.user || !data.session) {
         console.log("B1 - Missing user or session");
         throw new Error('Login failed');
