@@ -27,8 +27,16 @@ export default function LoginPage() {
       console.log("LOGIN PAGE - Calling login function");
       await login(email, password);
       console.log("LOGIN PAGE - Login successful, redirecting to dashboard");
+      console.log("LOGIN PAGE - Current pathname:", window.location.pathname);
       router.push('/dashboard');
       console.log("LOGIN PAGE - router.push called");
+      console.log("LOGIN PAGE - Waiting for navigation...");
+      setTimeout(() => {
+        console.log("LOGIN PAGE - After 1 second, pathname:", window.location.pathname);
+      }, 1000);
+      setTimeout(() => {
+        console.log("LOGIN PAGE - After 3 seconds, pathname:", window.location.pathname);
+      }, 3000);
     } catch (err) {
       console.log("LOGIN PAGE - Login error:", err);
       setError(err instanceof Error ? err.message : 'Login failed');
