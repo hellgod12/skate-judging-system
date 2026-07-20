@@ -10,7 +10,7 @@ let supabaseInstance: ReturnType<typeof createClient> | null = null
 
 export const getSupabase = () => {
   if (!supabaseInstance) {
-    console.log("SUPABASE CLIENT - Creating new instance");
+    if (process.env.NODE_ENV === 'development') console.log("SUPABASE CLIENT - Creating new instance");
     if (!supabaseUrl || !supabaseAnonKey) {
       if (isBuildTime) {
         // Return a mock client during build
@@ -27,7 +27,7 @@ export const getSupabase = () => {
         storageKey: 'sb-skate-judging-auth-token',
       }
     })
-    console.log("SUPABASE CLIENT - Instance created with auth options");
+    if (process.env.NODE_ENV === 'development') console.log("SUPABASE CLIENT - Instance created with auth options");
   }
   return supabaseInstance
 }

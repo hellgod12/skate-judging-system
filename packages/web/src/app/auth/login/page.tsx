@@ -19,23 +19,16 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("LOGIN BUTTON CLICKED");
     setError('');
     setIsLoading(true);
 
     try {
-      console.log("LOGIN PAGE - Calling login function");
       await login(email, password);
-      console.log("LOGIN PAGE - Login successful, redirecting to dashboard");
-      console.log("LOGIN PAGE - Current pathname:", window.location.pathname);
-      console.log("LOGIN PAGE - Using window.location.replace");
-      window.location.replace('/dashboard');
-      console.log("LOGIN PAGE - window.location.replace called");
+      router.push('/dashboard');
+      router.refresh();
     } catch (err) {
-      console.log("LOGIN PAGE - Login error:", err);
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
-      console.log("LOGIN PAGE - Finally block, setting isLoading false");
       setIsLoading(false);
     }
   };
