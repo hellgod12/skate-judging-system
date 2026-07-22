@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import { LeaderboardService } from './leaderboard';
 import { ScoreService } from './score';
 import { RiderService } from './rider';
@@ -10,6 +10,7 @@ export class ReportService {
    */
   static async generateReport(data: CreateReportData): Promise<Report> {
     try {
+    const supabase = await createClient();
       const { data: report, error } = await supabase
         .from('reports')
         .insert({
@@ -222,6 +223,7 @@ export class ReportService {
    */
   static async getEventReports(eventId: string): Promise<Report[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('reports')
         .select('*')
@@ -244,6 +246,7 @@ export class ReportService {
    */
   static async getReportById(id: string): Promise<Report> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('reports')
         .select('*')
@@ -266,6 +269,7 @@ export class ReportService {
    */
   static async deleteReport(id: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('reports')
         .delete()

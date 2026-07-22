@@ -1,33 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/server';
 import { get_best_trick_total, calculate_final_score } from '@/lib/scoring';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-
-const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  console.log('[events/[id]/leaderboard GET] Entering handler');
-  
-  if (!supabase) {
-    console.error('[events/[id]/leaderboard GET] Supabase not configured');
-    return NextResponse.json(
-      { success: false, error: 'Supabase not configured', file: 'events/[id]/leaderboard/route.ts', line: 17 },
-      { status: 500 }
-    );
-  }
-
   try {
-    console.log('[events/[id]/leaderboard GET] Creating Supabase client');
+    const supabase = await createClient();
     const eventId = parseInt(params.id);
 
-    console.log('[events/[id]/leaderboard GET] Reading database (event)');
     // Get event details
     const { data: event, error: eventError } = await supabase
       .from('events')
@@ -36,14 +18,12 @@ export async function GET(
       .single();
 
     if (eventError || !event) {
-      console.error('[events/[id]/leaderboard GET] Event not found:', { eventId, eventError });
       return NextResponse.json(
-        { success: false, error: 'Event not found', details: eventError?.message, file: 'events/[id]/leaderboard/route.ts', line: 34 },
+        { success: false, error: 'Event not found', details: eventError?.message },
         { status: 404 }
       );
     }
 
-    console.log('[events/[id]/leaderboard GET] Reading database (riders)');
     // Get all riders in the event
     const { data: riders, error: ridersError } = await supabase
       .from('riders')
@@ -51,16 +31,14 @@ export async function GET(
       .order('name');
 
     if (ridersError) {
-      console.error('[events/[id]/leaderboard GET] Failed to fetch riders:', ridersError);
       return NextResponse.json(
-        { success: false, error: 'Failed to fetch riders', details: ridersError.message, file: 'events/[id]/leaderboard/route.ts', line: 48 },
+        { success: false, error: 'Failed to fetch riders', details: ridersError.message },
         { status: 500 }
       );
     }
 
     const ridersArray = riders || [];
 
-    console.log('[events/[id]/leaderboard GET] Running scoring calculation');
     // Calculate leaderboard for each rider
     const leaderboard = await Promise.all(
       ridersArray.map(async (rider) => {
@@ -112,18 +90,10 @@ export async function GET(
     // Sort by final score descending
     leaderboard.sort((a, b) => b.final_score - a.final_score);
 
-    console.log('[events/[id]/leaderboard GET] Returning response');
     return NextResponse.json(leaderboard);
   } catch (error: any) {
-    console.error('[events/[id]/leaderboard GET] Exception:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error.message, 
-        stack: error.stack, 
-        file: 'events/[id]/leaderboard/route.ts',
-        cause: error.cause
-      },
+      { success: false, error: error.message },
       { status: 500 }
     );
   }

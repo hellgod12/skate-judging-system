@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { JudgeSession, OperatorSession, CreateJudgeSessionData, CreateOperatorSessionData, UpdateSessionData } from './types/session';
 
 export class SessionService {
@@ -7,6 +7,7 @@ export class SessionService {
    */
   static async getJudgeSessions(eventId: string): Promise<JudgeSession[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('judge_sessions')
         .select('*')
@@ -29,6 +30,7 @@ export class SessionService {
    */
   static async getActiveJudgeSession(eventId: string, judgeId: string): Promise<JudgeSession | null> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('judge_sessions')
         .select('*')
@@ -53,6 +55,8 @@ export class SessionService {
    */
   static async createJudgeSession(data: CreateJudgeSessionData): Promise<JudgeSession> {
     try {
+      const supabase = await createClient();
+      // End any existing active session for this judge
       // End any existing active session for this judge
       const existingSession = await this.getActiveJudgeSession(data.event_id, data.judge_id);
       if (existingSession) {
@@ -88,6 +92,7 @@ export class SessionService {
    */
   static async updateSession(sessionId: string, data: UpdateSessionData): Promise<JudgeSession | OperatorSession> {
     try {
+    const supabase = await createClient();
       // Determine which table to update
       const { data: judgeSession } = await supabase
         .from('judge_sessions')
@@ -158,6 +163,7 @@ export class SessionService {
    */
   static async getOperatorSessions(eventId: string): Promise<OperatorSession[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('operator_sessions')
         .select('*')
@@ -180,6 +186,7 @@ export class SessionService {
    */
   static async getActiveOperatorSession(eventId: string, operatorId: string): Promise<OperatorSession | null> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('operator_sessions')
         .select('*')
@@ -204,6 +211,8 @@ export class SessionService {
    */
   static async createOperatorSession(data: CreateOperatorSessionData): Promise<OperatorSession> {
     try {
+      const supabase = await createClient();
+      // End any existing active session for this operator
       // End any existing active session for this operator
       const existingSession = await this.getActiveOperatorSession(data.event_id, data.operator_id);
       if (existingSession) {
@@ -239,6 +248,7 @@ export class SessionService {
    */
   static async getSessionById(sessionId: string): Promise<JudgeSession | OperatorSession | null> {
     try {
+    const supabase = await createClient();
       const { data: judgeSession } = await supabase
         .from('judge_sessions')
         .select('*')
@@ -271,6 +281,7 @@ export class SessionService {
    */
   static async getActiveSessions(eventId: string): Promise<(JudgeSession | OperatorSession)[]> {
     try {
+      const supabase = await createClient();
       const [judgeSessions, operatorSessions] = await Promise.all([
         supabase
           .from('judge_sessions')

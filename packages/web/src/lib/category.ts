@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { Category, CreateCategoryData, UpdateCategoryData } from './types/category';
 
 export class CategoryService {
@@ -7,6 +7,7 @@ export class CategoryService {
    */
   static async getCategories(organizationId?: string): Promise<Category[]> {
     try {
+      const supabase = await createClient();
       let query = supabase
         .from('categories')
         .select('*')
@@ -37,6 +38,7 @@ export class CategoryService {
    */
   static async getCategoryById(id: string): Promise<Category> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('categories')
         .select('*')
@@ -60,6 +62,7 @@ export class CategoryService {
    */
   static async createCategory(data: CreateCategoryData): Promise<Category> {
     try {
+      const supabase = await createClient();
       const { data: category, error } = await supabase
         .from('categories')
         .insert({
@@ -92,6 +95,7 @@ export class CategoryService {
    */
   static async updateCategory(id: string, data: UpdateCategoryData): Promise<Category> {
     try {
+    const supabase = await createClient();
       const { data: category, error } = await supabase
         .from('categories')
         .update(data)
@@ -115,6 +119,7 @@ export class CategoryService {
    */
   static async deleteCategory(id: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('categories')
         .update({ deleted_at: new Date().toISOString() })
@@ -139,6 +144,7 @@ export class CategoryService {
     organizationId?: string;
   }): Promise<Category[]> {
     try {
+    const supabase = await createClient();
       let query = supabase
         .from('categories')
         .select('*')

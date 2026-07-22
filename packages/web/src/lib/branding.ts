@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { EventBranding, CreateEventBrandingData, UpdateEventBrandingData } from './types/branding';
 
 export class BrandingService {
@@ -7,6 +7,7 @@ export class BrandingService {
    */
   static async getEventBranding(eventId: string): Promise<EventBranding | null> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('event_branding')
         .select('*')
@@ -33,6 +34,7 @@ export class BrandingService {
    */
   static async getBrandingById(id: string): Promise<EventBranding> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('event_branding')
         .select('*')
@@ -55,6 +57,7 @@ export class BrandingService {
    */
   static async upsertEventBranding(data: CreateEventBrandingData): Promise<EventBranding> {
     try {
+    const supabase = await createClient();
       const { data: branding, error } = await supabase
         .from('event_branding')
         .upsert({
@@ -94,6 +97,7 @@ export class BrandingService {
    */
   static async updateBranding(id: string, data: UpdateEventBrandingData): Promise<EventBranding> {
     try {
+    const supabase = await createClient();
       const { data: branding, error } = await supabase
         .from('event_branding')
         .update(data)
@@ -117,6 +121,7 @@ export class BrandingService {
    */
   static async deleteBranding(eventId: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('event_branding')
         .delete()

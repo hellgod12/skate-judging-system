@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { Rider, RiderProfile, CreateRiderData, UpdateRiderData } from './types/rider';
 
 export class RiderService {
@@ -7,6 +7,7 @@ export class RiderService {
    */
   static async getRiders(organizationId?: string): Promise<Rider[]> {
     try {
+    const supabase = await createClient();
       let query = supabase
         .from('riders')
         .select('*')
@@ -37,6 +38,7 @@ export class RiderService {
    */
   static async getRiderById(id: string): Promise<Rider> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('riders')
         .select('*')
@@ -60,6 +62,7 @@ export class RiderService {
    */
   static async createRider(data: CreateRiderData): Promise<Rider> {
     try {
+    const supabase = await createClient();
       const { data: rider, error } = await supabase
         .from('riders')
         .insert({
@@ -101,6 +104,7 @@ export class RiderService {
    */
   static async updateRider(id: string, data: UpdateRiderData): Promise<Rider> {
     try {
+    const supabase = await createClient();
       const { data: rider, error } = await supabase
         .from('riders')
         .update(data)
@@ -124,6 +128,7 @@ export class RiderService {
    */
   static async deleteRider(id: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('riders')
         .update({ deleted_at: new Date().toISOString() })
@@ -143,6 +148,7 @@ export class RiderService {
    */
   static async getRiderProfile(riderId: string): Promise<RiderProfile> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('rider_profiles')
         .select('*')
@@ -165,6 +171,7 @@ export class RiderService {
    */
   static async updateRiderProfile(riderId: string, data: Partial<RiderProfile>): Promise<RiderProfile> {
     try {
+    const supabase = await createClient();
       const { data: profile, error } = await supabase
         .from('rider_profiles')
         .update(data)
@@ -201,6 +208,7 @@ export class RiderService {
    */
   static async searchRiders(query: string, organizationId?: string): Promise<Rider[]> {
     try {
+    const supabase = await createClient();
       let dbQuery = supabase
         .from('riders')
         .select('*')
@@ -231,6 +239,7 @@ export class RiderService {
    */
   static async getRidersByCategory(categoryId: string): Promise<Rider[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('rider_profiles')
         .select('riders(*)')
@@ -252,6 +261,7 @@ export class RiderService {
    */
   static async getRidersByDivision(divisionId: string): Promise<Rider[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('rider_profiles')
         .select('riders(*)')

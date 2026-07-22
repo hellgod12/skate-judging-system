@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import { LeaderboardService } from './leaderboard';
 import { ScoreService } from './score';
 import type { ArchivedEvent, CreateArchiveData, ArchiveSearchParams } from './types/archive';
@@ -9,6 +9,7 @@ export class ArchiveService {
    */
   static async archiveEvent(data: CreateArchiveData): Promise<ArchivedEvent> {
     try {
+    const supabase = await createClient();
       const { data: archivedEvent, error } = await supabase
         .from('archived_events')
         .insert({
@@ -44,6 +45,7 @@ export class ArchiveService {
    */
   static async getArchivedEventById(id: string): Promise<ArchivedEvent> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('archived_events')
         .select('*')
@@ -66,6 +68,7 @@ export class ArchiveService {
    */
   static async getArchivedEventByOriginalId(originalEventId: string): Promise<ArchivedEvent | null> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('archived_events')
         .select('*')
@@ -88,6 +91,7 @@ export class ArchiveService {
    */
   static async searchArchivedEvents(params: ArchiveSearchParams): Promise<ArchivedEvent[]> {
     try {
+    const supabase = await createClient();
       let query = supabase
         .from('archived_events')
         .select('*')
@@ -139,6 +143,7 @@ export class ArchiveService {
    */
   static async getOrganizationArchivedEvents(organizationId: string): Promise<ArchivedEvent[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('archived_events')
         .select('*')
@@ -161,6 +166,7 @@ export class ArchiveService {
    */
   static async restoreArchivedEvent(archivedEventId: string): Promise<void> {
     try {
+      const supabase = await createClient();
       const archivedEvent = await this.getArchivedEventById(archivedEventId);
       
       // This would typically create a new event based on the archived data
@@ -184,6 +190,7 @@ export class ArchiveService {
    */
   static async deleteArchivedEvent(id: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('archived_events')
         .delete()
@@ -208,6 +215,7 @@ export class ArchiveService {
     by_year: Record<string, number>;
   }> {
     try {
+    const supabase = await createClient();
       let query = supabase
         .from('archived_events')
         .select('*');
@@ -252,6 +260,7 @@ export class ArchiveService {
    */
   static async autoArchiveCompletedEvents(): Promise<number> {
     try {
+    const supabase = await createClient();
       // Get events that are completed but not archived
       const { data: events, error } = await supabase
         .from('events')

@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { Timer, CreateTimerData, UpdateTimerData } from './types/timer';
 
 export class TimerService {
@@ -7,6 +7,7 @@ export class TimerService {
    */
   static async getActiveTimer(eventId: string, timerType?: string): Promise<Timer | null> {
     try {
+      const supabase = await createClient();
       let query = supabase
         .from('timers')
         .select('*')
@@ -37,6 +38,7 @@ export class TimerService {
    */
   static async getTimerById(id: string): Promise<Timer> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('timers')
         .select('*')
@@ -59,6 +61,7 @@ export class TimerService {
    */
   static async createTimer(data: CreateTimerData): Promise<Timer> {
     try {
+      const supabase = await createClient();
       const { data: timer, error } = await supabase
         .from('timers')
         .insert({
@@ -88,6 +91,7 @@ export class TimerService {
    */
   static async updateTimer(id: string, data: UpdateTimerData): Promise<Timer> {
     try {
+      const supabase = await createClient();
       const { data: timer, error } = await supabase
         .from('timers')
         .update(data)
@@ -205,6 +209,7 @@ export class TimerService {
    */
   static async getEventTimers(eventId: string): Promise<Timer[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('timers')
         .select('*')
@@ -227,6 +232,7 @@ export class TimerService {
    */
   static async deleteTimer(id: string): Promise<void> {
     try {
+      const supabase = await createClient();
       const { error } = await supabase
         .from('timers')
         .delete()

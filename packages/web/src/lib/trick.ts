@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { Trick, TrickCategory, CreateTrickData, UpdateTrickData } from './types/trick';
 
 export class TrickService {
@@ -7,6 +7,7 @@ export class TrickService {
    */
   static async getTricks(): Promise<Trick[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('tricks')
         .select('*')
@@ -29,6 +30,7 @@ export class TrickService {
    */
   static async getTrickById(id: string): Promise<Trick> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('tricks')
         .select('*')
@@ -52,6 +54,7 @@ export class TrickService {
    */
   static async getTricksByCategory(categoryId: string): Promise<Trick[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('tricks')
         .select('*')
@@ -75,6 +78,7 @@ export class TrickService {
    */
   static async searchTricks(query: string): Promise<Trick[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('tricks')
         .select('*')
@@ -98,6 +102,7 @@ export class TrickService {
    */
   static async getTrickCategories(): Promise<TrickCategory[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('trick_categories')
         .select('*')
@@ -119,6 +124,7 @@ export class TrickService {
    */
   static async createTrick(data: CreateTrickData): Promise<Trick> {
     try {
+      const supabase = await createClient();
       const { data: trick, error } = await supabase
         .from('tricks')
         .insert({
@@ -152,6 +158,7 @@ export class TrickService {
    */
   static async updateTrick(id: string, data: UpdateTrickData): Promise<Trick> {
     try {
+      const supabase = await createClient();
       const { data: trick, error } = await supabase
         .from('tricks')
         .update(data)
@@ -175,6 +182,7 @@ export class TrickService {
    */
   static async deleteTrick(id: string): Promise<void> {
     try {
+      const supabase = await createClient();
       const { error } = await supabase
         .from('tricks')
         .update({ deleted_at: new Date().toISOString() })

@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { Event, CompetitionTemplate, CreateEventData, UpdateEventData, CreateTemplateData } from './types/event';
 
 export class EventService {
@@ -7,6 +7,7 @@ export class EventService {
    */
   static async getEvents(organizationId: string): Promise<Event[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('events')
         .select('*')
@@ -30,6 +31,7 @@ export class EventService {
    */
   static async getEventById(id: string): Promise<Event> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('events')
         .select('*')
@@ -53,6 +55,7 @@ export class EventService {
    */
   static async createEvent(data: CreateEventData): Promise<Event> {
     try {
+      const supabase = await createClient();
       const { data: event, error } = await supabase
         .from('events')
         .insert({
@@ -101,6 +104,7 @@ export class EventService {
    */
   static async updateEvent(id: string, data: UpdateEventData): Promise<Event> {
     try {
+    const supabase = await createClient();
       const { data: event, error } = await supabase
         .from('events')
         .update(data)
@@ -124,6 +128,7 @@ export class EventService {
    */
   static async deleteEvent(id: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('events')
         .update({ deleted_at: new Date().toISOString() })
@@ -191,6 +196,7 @@ export class EventService {
    */
   static async getTemplates(organizationId?: string): Promise<CompetitionTemplate[]> {
     try {
+    const supabase = await createClient();
       let query = supabase
         .from('competition_templates')
         .select('*')
@@ -222,6 +228,7 @@ export class EventService {
    */
   static async getTemplateById(id: string): Promise<CompetitionTemplate> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('competition_templates')
         .select('*')
@@ -245,6 +252,7 @@ export class EventService {
    */
   static async createTemplate(data: CreateTemplateData): Promise<CompetitionTemplate> {
     try {
+    const supabase = await createClient();
       const { data: template, error } = await supabase
         .from('competition_templates')
         .insert({
@@ -282,6 +290,7 @@ export class EventService {
    */
   static async updateTemplate(id: string, data: Partial<CreateTemplateData>): Promise<CompetitionTemplate> {
     try {
+    const supabase = await createClient();
       const { data: template, error } = await supabase
         .from('competition_templates')
         .update(data)
@@ -305,6 +314,7 @@ export class EventService {
    */
   static async deleteTemplate(id: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('competition_templates')
         .update({ deleted_at: new Date().toISOString() })
@@ -324,6 +334,7 @@ export class EventService {
    */
   static async getEventRegistrationsCount(eventId: string): Promise<number> {
     try {
+    const supabase = await createClient();
       const { count, error } = await supabase
         .from('event_registrations')
         .select('*', { count: 'exact', head: true })

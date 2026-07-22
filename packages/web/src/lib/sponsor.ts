@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { Sponsor, CreateSponsorData, UpdateSponsorData } from './types/sponsor';
 
 export class SponsorService {
@@ -7,6 +7,7 @@ export class SponsorService {
    */
   static async getSponsors(organizationId?: string): Promise<Sponsor[]> {
     try {
+      const supabase = await createClient();
       let query = supabase
         .from('sponsors')
         .select('*')
@@ -37,6 +38,7 @@ export class SponsorService {
    */
   static async getSponsorsByTier(tier: string, organizationId?: string): Promise<Sponsor[]> {
     try {
+      const supabase = await createClient();
       let query = supabase
         .from('sponsors')
         .select('*')
@@ -69,6 +71,7 @@ export class SponsorService {
    */
   static async getSponsorById(id: string): Promise<Sponsor> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('sponsors')
         .select('*')
@@ -92,6 +95,7 @@ export class SponsorService {
    */
   static async createSponsor(data: CreateSponsorData): Promise<Sponsor> {
     try {
+      const supabase = await createClient();
       const { data: sponsor, error } = await supabase
         .from('sponsors')
         .insert({
@@ -125,6 +129,7 @@ export class SponsorService {
    */
   static async updateSponsor(id: string, data: UpdateSponsorData): Promise<Sponsor> {
     try {
+      const supabase = await createClient();
       const { data: sponsor, error } = await supabase
         .from('sponsors')
         .update(data)
@@ -148,6 +153,7 @@ export class SponsorService {
    */
   static async deleteSponsor(id: string): Promise<void> {
     try {
+      const supabase = await createClient();
       const { error } = await supabase
         .from('sponsors')
         .update({ deleted_at: new Date().toISOString() })
@@ -181,6 +187,7 @@ export class SponsorService {
    */
   static async getEventSponsors(eventId: string): Promise<Sponsor[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('event_sponsors')
         .select('sponsors(*)')
@@ -202,6 +209,7 @@ export class SponsorService {
    */
   static async addSponsorToEvent(eventId: string, sponsorId: string): Promise<void> {
     try {
+      const supabase = await createClient();
       const { error } = await supabase
         .from('event_sponsors')
         .insert({
@@ -223,6 +231,7 @@ export class SponsorService {
    */
   static async removeSponsorFromEvent(eventId: string, sponsorId: string): Promise<void> {
     try {
+      const supabase = await createClient();
       const { error } = await supabase
         .from('event_sponsors')
         .delete()

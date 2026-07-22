@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { CompetitionSettings, UpdateCompetitionSettingsData, DEFAULT_SCORING_CONFIG, DEFAULT_RUN_CONFIG, DEFAULT_BEST_TRICK_CONFIG, DEFAULT_JAM_CONFIG, DEFAULT_TIMER_CONFIG } from './types/competition-settings';
 
 export class CompetitionSettingsService {
@@ -7,6 +7,7 @@ export class CompetitionSettingsService {
    */
   static async getEventSettings(eventId: string): Promise<CompetitionSettings> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('events')
         .select('scoring_config, run_config, best_trick_config, jam_config, timer_config')
@@ -35,6 +36,7 @@ export class CompetitionSettingsService {
    */
   static async updateEventSettings(eventId: string, data: UpdateCompetitionSettingsData): Promise<CompetitionSettings> {
     try {
+      const supabase = await createClient();
       const updates: any = {};
       if (data.scoring_config) updates.scoring_config = data.scoring_config;
       if (data.run_config) updates.run_config = data.run_config;
@@ -71,6 +73,7 @@ export class CompetitionSettingsService {
    */
   static async getScoringConfig(eventId: string): Promise<any> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('events')
         .select('scoring_config')
@@ -93,6 +96,7 @@ export class CompetitionSettingsService {
    */
   static async updateScoringConfig(eventId: string, scoringConfig: any): Promise<any> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('events')
         .update({ scoring_config: scoringConfig })
@@ -116,6 +120,7 @@ export class CompetitionSettingsService {
    */
   static async getRunConfig(eventId: string): Promise<any> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('events')
         .select('run_config')
@@ -138,6 +143,7 @@ export class CompetitionSettingsService {
    */
   static async updateRunConfig(eventId: string, runConfig: any): Promise<any> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('events')
         .update({ run_config: runConfig })
@@ -161,6 +167,7 @@ export class CompetitionSettingsService {
    */
   static async getTimerConfig(eventId: string): Promise<any> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('events')
         .select('timer_config')
@@ -183,6 +190,7 @@ export class CompetitionSettingsService {
    */
   static async updateTimerConfig(eventId: string, timerConfig: any): Promise<any> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('events')
         .update({ timer_config: timerConfig })

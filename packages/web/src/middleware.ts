@@ -1,26 +1,8 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { updateSession } from '@/utils/supabase/middleware'
+import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
-  if (process.env.NODE_ENV === 'development') {
-    console.log("MIDDLEWARE EXECUTED", req.nextUrl.pathname);
-    console.log("MIDDLEWARE - START", req.nextUrl.pathname);
-    console.log("MIDDLEWARE - Method:", req.method);
-    console.log("MIDDLEWARE - Headers:", Object.fromEntries(req.headers.entries()));
-  }
-
-  const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log("MIDDLEWARE - session:", session ? "EXISTS" : "NULL");
-    console.log("MIDDLEWARE - session user:", session?.user?.id);
-  }
+  const { supabaseResponse, user } = await updateSession(req)
 
   // Protected routes
   const protectedPaths = ['/dashboard', '/admin', '/judge', '/operator']
@@ -34,23 +16,15 @@ export async function middleware(req: NextRequest) {
     req.nextUrl.pathname.startsWith(path)
   )
 
-  if (process.env.NODE_ENV === 'development') {
-    console.log("MIDDLEWARE - isProtectedRoute:", isProtectedRoute);
-    console.log("MIDDLEWARE - isAuthRoute:", isAuthRoute);
-  }
-
-  if (isProtectedRoute && !session) {
-    if (process.env.NODE_ENV === 'development') console.log("MIDDLEWARE - Redirecting to login (no session on protected route)");
+  if (isProtectedRoute && !user) {
     return NextResponse.redirect(new URL('/auth/login', req.url))
   }
 
-  if (isAuthRoute && session) {
-    if (process.env.NODE_ENV === 'development') console.log("MIDDLEWARE - Redirecting to dashboard (session exists on auth route)");
+  if (isAuthRoute && user) {
     return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
-  if (process.env.NODE_ENV === 'development') console.log("MIDDLEWARE - Allowing request to proceed");
-  return res
+  return supabaseResponse
 }
 
 export const config = {

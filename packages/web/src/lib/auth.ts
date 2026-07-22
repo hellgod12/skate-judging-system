@@ -1,133 +1,68 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { User, LoginCredentials, RegisterData, AuthResponse, ForgotPasswordData, ResetPasswordData } from './types/auth';
-
-const DEBUG = process.env.NODE_ENV === 'development';
 
 export class AuthService {
   /**
    * Login user with email and password
    */
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    if (DEBUG) console.log("LOGIN FUNCTION START");
+    const supabase = createClient();
+    
     try {
-      if (DEBUG) console.log("CALLING SUPABASE AUTH");
+    const supabase = await createClient();
       const { data, error } = await supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password,
       });
 
-      if (DEBUG) console.log("SIGN IN WITH PASSWORD RESPONSE:", { data, error });
-
       if (error) {
-        if (DEBUG) console.log("Error detected:", error);
         throw new Error(error.message);
       }
 
-      if (DEBUG) console.log("USER ID:", data.user?.id);
-      if (DEBUG) console.log("SESSION:", data.session);
-
-      // Log localStorage keys beginning with "sb-"
-      if (DEBUG && typeof window !== 'undefined') {
-        const sbKeys = Object.keys(localStorage).filter(key => key.startsWith('sb-'));
-        console.log("LOCALSTORAGE SB-KEYS:", sbKeys);
-        sbKeys.forEach(key => {
-          console.log(`LOCALSTORAGE ${key}:`, localStorage.getItem(key));
-        });
-      }
-
-      // Verify session is persisted by calling getSession immediately
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (DEBUG) console.log("GET SESSION AFTER LOGIN:", { sessionData, sessionError });
-
       if (!data.user || !data.session) {
-        if (DEBUG) console.log("Missing user or session");
         throw new Error('Login failed');
       }
 
-      if (DEBUG) console.log("C");
-
       // Fetch user profile from database
       let userProfile;
-      let profileError;
 
-      try {
-        if (DEBUG) console.log("C1 - Fetching existing profile");
-        const { data: existingProfile, error: fetchError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', data.user.id)
-          .maybeSingle();
+      const { data: existingProfile, error: fetchError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', data.user.id)
+        .maybeSingle();
 
-        if (DEBUG) console.log("C2 - Fetch result:", { existingProfile, fetchError });
-        if (DEBUG) console.log("D");
-
-        if (fetchError) {
-          if (DEBUG) console.log("D1 - Fetch error:", fetchError);
-          throw new Error(`Failed to fetch user profile: ${fetchError.message}`);
-        }
-
-        // If profile doesn't exist, create it automatically
-        if (!existingProfile) {
-          if (DEBUG) console.log("E - Profile does not exist, creating new profile");
-          if (DEBUG) console.log("=== CREATE USER PROFILE (LOGIN) ===");
-          if (DEBUG) console.log("Auth user id:", data.user.id);
-          if (DEBUG) console.log("Auth user email:", data.user.email);
-          if (DEBUG) console.log("Auth user metadata:", data.user.user_metadata);
-
-          const insertPayload = {
-            id: data.user.id,
-            email: data.user.email || '',
-            password_hash: '', // Hashed by Supabase
-            first_name: data.user.user_metadata?.first_name || '',
-            last_name: data.user.user_metadata?.last_name || '',
-            display_name: data.user.user_metadata?.display_name || data.user.user_metadata?.full_name || '',
-            is_active: true,
-            is_verified: data.user.email_confirmed_at != null,
-          };
-
-          if (DEBUG) console.log("Insert payload:", insertPayload);
-
-          try {
-            if (DEBUG) console.log("E1 - Inserting profile");
-            const { data: newProfile, error: createError } = await supabase
-              .from('users')
-              .insert(insertPayload)
-              .select()
-              .single();
-
-            if (DEBUG) console.log("E2 - Insert result:", { newProfile, createError });
-            if (DEBUG) console.log("F");
-
-            if (createError) {
-              if (DEBUG) {
-                console.log("=== CREATE PROFILE ERROR (LOGIN) ===");
-                console.log("Error object:", createError);
-                console.log("Error JSON:", JSON.stringify(createError, null, 2));
-                console.log("Error code:", createError.code);
-                console.log("Error message:", createError.message);
-                console.log("Error details:", createError.details);
-                console.log("Error hint:", createError.hint);
-              }
-              throw new Error(`Failed to create user profile: ${createError.message} (Code: ${createError.code})`);
-            }
-
-            if (DEBUG) console.log("Profile created successfully:", newProfile);
-            userProfile = newProfile;
-          } catch (insertError) {
-            if (DEBUG) console.log("E3 - Insert catch block:", insertError);
-            throw insertError;
-          }
-        } else {
-          if (DEBUG) console.log("E - Profile exists, using existing profile");
-          userProfile = existingProfile;
-        }
-      } catch (fetchCatchError) {
-        if (DEBUG) console.log("C3 - Fetch catch block:", fetchCatchError);
-        throw fetchCatchError;
+      if (fetchError) {
+        throw new Error(`Failed to fetch user profile: ${fetchError.message}`);
       }
 
-      if (DEBUG) console.log("G");
-      if (DEBUG) console.log("Returning auth response");
+      // If profile doesn't exist, create it automatically
+      if (!existingProfile) {
+        const insertPayload = {
+          id: data.user.id,
+          email: data.user.email || '',
+          password_hash: '', // Hashed by Supabase
+          first_name: data.user.user_metadata?.first_name || '',
+          last_name: data.user.user_metadata?.last_name || '',
+          display_name: data.user.user_metadata?.display_name || data.user.user_metadata?.full_name || '',
+          is_active: true,
+          is_verified: data.user.email_confirmed_at != null,
+        };
+
+        const { data: newProfile, error: createError } = await supabase
+          .from('users')
+          .insert(insertPayload)
+          .select()
+          .single();
+
+        if (createError) {
+          throw new Error(`Failed to create user profile: ${createError.message} (Code: ${createError.code})`);
+        }
+
+        userProfile = newProfile;
+      } else {
+        userProfile = existingProfile;
+      }
 
       return {
         user: userProfile as User,
@@ -145,7 +80,11 @@ export class AuthService {
    * Register new user
    */
   static async register(data: RegisterData): Promise<AuthResponse> {
+    const supabase = createClient();
+    
     try {
+      // Create user in Supabase Auth
+    const supabase = await createClient();
       // Create user in Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: data.email,
@@ -224,7 +163,10 @@ export class AuthService {
    * Logout user
    */
   static async logout(): Promise<void> {
+    const supabase = createClient();
+    
     try {
+    const supabase = await createClient();
       const { error } = await supabase.auth.signOut();
       if (error) {
         throw new Error(error.message);
@@ -239,7 +181,10 @@ export class AuthService {
    * Refresh access token
    */
   static async refreshToken(): Promise<AuthResponse> {
+    const supabase = createClient();
+    
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase.auth.refreshSession();
 
       if (error) {
@@ -305,7 +250,10 @@ export class AuthService {
    * Request password reset
    */
   static async forgotPassword(data: ForgotPasswordData): Promise<void> {
+    const supabase = createClient();
+    
     try {
+    const supabase = await createClient();
       const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
         redirectTo: `${window.location.origin}/auth/reset-password`,
       });
@@ -323,7 +271,10 @@ export class AuthService {
    * Reset password with token
    */
   static async resetPassword(data: ResetPasswordData): Promise<void> {
+    const supabase = createClient();
+    
     try {
+    const supabase = await createClient();
       const { error } = await supabase.auth.updateUser({
         password: data.password,
       });
@@ -341,7 +292,10 @@ export class AuthService {
    * Get current user
    */
   static async getCurrentUser(): Promise<User | null> {
+    const supabase = createClient();
+    
     try {
+    const supabase = await createClient();
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
@@ -364,11 +318,6 @@ export class AuthService {
 
       // If profile doesn't exist, create it automatically
       if (!existingProfile) {
-        console.log("=== CREATE USER PROFILE (GET CURRENT USER) ===");
-        console.log("Auth user id:", user.id);
-        console.log("Auth user email:", user.email);
-        console.log("Auth user metadata:", user.user_metadata);
-
         const insertPayload = {
           id: user.id,
           email: user.email || '',
@@ -380,8 +329,6 @@ export class AuthService {
           is_verified: user.email_confirmed_at != null,
         };
 
-        console.log("Insert payload:", insertPayload);
-
         const { data: newProfile, error: createError } = await supabase
           .from('users')
           .insert(insertPayload)
@@ -389,18 +336,10 @@ export class AuthService {
           .single();
 
         if (createError) {
-          console.log("=== CREATE PROFILE ERROR (GET CURRENT USER) ===");
-          console.log("Error object:", createError);
-          console.log("Error JSON:", JSON.stringify(createError, null, 2));
-          console.log("Error code:", createError.code);
-          console.log("Error message:", createError.message);
-          console.log("Error details:", createError.details);
-          console.log("Error hint:", createError.hint);
           console.error('Failed to create user profile:', createError);
           return null;
         }
 
-        console.log("Profile created successfully:", newProfile);
         userProfile = newProfile;
       } else {
         userProfile = existingProfile;
@@ -417,7 +356,10 @@ export class AuthService {
    * Update user profile
    */
   static async updateProfile(userId: string, updates: Partial<User>): Promise<User> {
+    const supabase = createClient();
+    
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('users')
         .update(updates)
@@ -440,7 +382,10 @@ export class AuthService {
    * Check if user has specific permission
    */
   static async hasPermission(userId: string, permissionSlug: string): Promise<boolean> {
+    const supabase = createClient();
+    
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('user_roles')
         .select('roles!inner(*)')
@@ -464,7 +409,10 @@ export class AuthService {
    * Get user roles
    */
   static async getUserRoles(userId: string): Promise<any[]> {
+    const supabase = createClient();
+    
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('user_roles')
         .select('roles(*)')

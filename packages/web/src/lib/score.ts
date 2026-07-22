@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { JudgeScore, CreateJudgeScoreData, UpdateJudgeScoreData, ScoreValidation } from './types/score';
 
 export class ScoreService {
@@ -42,6 +42,7 @@ export class ScoreService {
    */
   static async submitScore(data: CreateJudgeScoreData): Promise<JudgeScore> {
     try {
+      const supabase = await createClient();
       const validation = this.validateScore(data);
       if (!validation.valid) {
         throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
@@ -85,6 +86,7 @@ export class ScoreService {
    */
   static async getEventScores(eventId: string): Promise<JudgeScore[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('judge_scores')
         .select('*')
@@ -107,6 +109,7 @@ export class ScoreService {
    */
   static async getRiderScores(eventId: string, riderId: string): Promise<JudgeScore[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('judge_scores')
         .select('*')
@@ -130,6 +133,7 @@ export class ScoreService {
    */
   static async getHeatScores(heatId: string): Promise<JudgeScore[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('judge_scores')
         .select('*')
@@ -152,6 +156,7 @@ export class ScoreService {
    */
   static async getScoreById(id: string): Promise<JudgeScore> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('judge_scores')
         .select('*')
@@ -174,6 +179,7 @@ export class ScoreService {
    */
   static async updateScore(id: string, data: UpdateJudgeScoreData): Promise<JudgeScore> {
     try {
+      const supabase = await createClient();
       const score = await this.getScoreById(id);
 
       if (score.is_locked) {
@@ -227,6 +233,7 @@ export class ScoreService {
    */
   static async overrideScore(id: string, data: UpdateJudgeScoreData, overriddenBy: string): Promise<JudgeScore> {
     try {
+      const supabase = await createClient();
       const score = await this.getScoreById(id);
 
       if (score.is_locked && !score.is_overridden) {
@@ -261,6 +268,7 @@ export class ScoreService {
    */
   static async getJudgeScores(judgeId: string, eventId?: string): Promise<JudgeScore[]> {
     try {
+    const supabase = await createClient();
       let query = supabase
         .from('judge_scores')
         .select('*')
@@ -306,6 +314,7 @@ export class ScoreService {
    */
   static async getLatestScores(eventId: string, limit: number = 50): Promise<JudgeScore[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('judge_scores')
         .select('*')

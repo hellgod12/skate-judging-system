@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { CompetitionRound, Heat, CreateRoundData, UpdateRoundData, CreateHeatData, UpdateHeatData } from './types/competition';
 
 export class CompetitionService {
@@ -7,6 +7,7 @@ export class CompetitionService {
    */
   static async getRounds(eventId: string): Promise<CompetitionRound[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('competition_rounds')
         .select('*')
@@ -29,6 +30,7 @@ export class CompetitionService {
    */
   static async getRoundById(id: string): Promise<CompetitionRound> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('competition_rounds')
         .select('*')
@@ -51,6 +53,7 @@ export class CompetitionService {
    */
   static async createRound(data: CreateRoundData): Promise<CompetitionRound> {
     try {
+      const supabase = await createClient();
       const { data: round, error } = await supabase
         .from('competition_rounds')
         .insert({
@@ -83,6 +86,7 @@ export class CompetitionService {
    */
   static async updateRound(id: string, data: UpdateRoundData): Promise<CompetitionRound> {
     try {
+      const supabase = await createClient();
       const { data: round, error } = await supabase
         .from('competition_rounds')
         .update(data)
@@ -106,6 +110,7 @@ export class CompetitionService {
    */
   static async deleteRound(id: string): Promise<void> {
     try {
+      const supabase = await createClient();
       const { error } = await supabase
         .from('competition_rounds')
         .delete()
@@ -149,6 +154,7 @@ export class CompetitionService {
    */
   static async getHeats(roundId: string): Promise<Heat[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('heats')
         .select('*')
@@ -171,6 +177,7 @@ export class CompetitionService {
    */
   static async getHeatById(id: string): Promise<Heat> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('heats')
         .select('*')
@@ -193,6 +200,7 @@ export class CompetitionService {
    */
   static async createHeat(data: CreateHeatData): Promise<Heat> {
     try {
+      const supabase = await createClient();
       const { data: heat, error } = await supabase
         .from('heats')
         .insert({
@@ -223,6 +231,7 @@ export class CompetitionService {
    */
   static async updateHeat(id: string, data: UpdateHeatData): Promise<Heat> {
     try {
+      const supabase = await createClient();
       const { data: heat, error } = await supabase
         .from('heats')
         .update(data)
@@ -246,6 +255,7 @@ export class CompetitionService {
    */
   static async deleteHeat(id: string): Promise<void> {
     try {
+      const supabase = await createClient();
       const { error } = await supabase
         .from('heats')
         .delete()
@@ -289,6 +299,7 @@ export class CompetitionService {
    */
   static async getHeatWithAssignments(heatId: string): Promise<Heat & { assignments: any[] }> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('heats')
         .select('*, heat_assignments(*)')
@@ -311,6 +322,7 @@ export class CompetitionService {
    */
   static async getEventStructure(eventId: string): Promise<CompetitionRound[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('competition_rounds')
         .select('*, heats(*)')

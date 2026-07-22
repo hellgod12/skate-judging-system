@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import { ScoreService } from './score';
 import { RiderService } from './rider';
 import { CompetitionSettingsService } from './competition-settings';
@@ -85,6 +85,7 @@ export class LeaderboardService {
    */
   static async getLeaderboard(eventId: string): Promise<Leaderboard> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('leaderboards')
         .select('*')
@@ -110,6 +111,7 @@ export class LeaderboardService {
    */
   static async saveLeaderboard(data: CreateLeaderboardData): Promise<Leaderboard> {
     try {
+    const supabase = await createClient();
       const { data: leaderboard, error } = await supabase
         .from('leaderboards')
         .insert({
@@ -137,6 +139,7 @@ export class LeaderboardService {
    */
   static async updateLeaderboard(eventId: string): Promise<Leaderboard> {
     try {
+      const supabase = await createClient();
       const leaderboard = await this.calculateLeaderboard(eventId);
 
       // Delete existing leaderboard
@@ -183,6 +186,7 @@ export class LeaderboardService {
    * Subscribe to real-time leaderboard updates
    */
   static subscribeToLeaderboard(eventId: string, callback: (leaderboard: Leaderboard) => void) {
+    const supabase = createClient();
     return supabase
       .channel(`leaderboard:${eventId}`)
       .on(
@@ -206,6 +210,7 @@ export class LeaderboardService {
    * Unsubscribe from leaderboard updates
    */
   static unsubscribeFromLeaderboard(eventId: string) {
+    const supabase = createClient();
     supabase.channel(`leaderboard:${eventId}`).unsubscribe();
   }
 
@@ -214,6 +219,7 @@ export class LeaderboardService {
    */
   static async getLeaderboardHistory(eventId: string, limit: number = 10): Promise<Leaderboard[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('leaderboards')
         .select('*')

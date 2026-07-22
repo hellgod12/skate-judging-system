@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { Judge, JudgeAssignment, CreateJudgeData, UpdateJudgeData, AssignJudgeData } from './types/judge';
 
 export class JudgeService {
@@ -7,6 +7,7 @@ export class JudgeService {
    */
   static async getJudges(organizationId?: string): Promise<Judge[]> {
     try {
+    const supabase = await createClient();
       let query = supabase
         .from('judges')
         .select('*')
@@ -37,6 +38,7 @@ export class JudgeService {
    */
   static async getJudgeById(id: string): Promise<Judge> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('judges')
         .select('*')
@@ -60,6 +62,7 @@ export class JudgeService {
    */
   static async createJudge(data: CreateJudgeData): Promise<Judge> {
     try {
+    const supabase = await createClient();
       const { data: judge, error } = await supabase
         .from('judges')
         .insert({
@@ -94,6 +97,7 @@ export class JudgeService {
    */
   static async updateJudge(id: string, data: UpdateJudgeData): Promise<Judge> {
     try {
+    const supabase = await createClient();
       const { data: judge, error } = await supabase
         .from('judges')
         .update(data)
@@ -117,6 +121,7 @@ export class JudgeService {
    */
   static async deleteJudge(id: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('judges')
         .update({ deleted_at: new Date().toISOString() })
@@ -136,6 +141,7 @@ export class JudgeService {
    */
   static async getJudgeAssignments(eventId: string): Promise<JudgeAssignment[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('judge_assignments')
         .select('*, judges(*)')
@@ -157,6 +163,7 @@ export class JudgeService {
    */
   static async assignJudge(data: AssignJudgeData): Promise<JudgeAssignment> {
     try {
+    const supabase = await createClient();
       const { data: assignment, error } = await supabase
         .from('judge_assignments')
         .insert({
@@ -185,6 +192,7 @@ export class JudgeService {
    */
   static async removeJudgeAssignment(assignmentId: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('judge_assignments')
         .delete()
@@ -204,6 +212,7 @@ export class JudgeService {
    */
   static async updateJudgeAssignment(assignmentId: string, data: Partial<AssignJudgeData>): Promise<JudgeAssignment> {
     try {
+      const supabase = await createClient();
       const updates: any = {};
       if (data.role) updates.role = data.role;
       if (data.weight !== undefined) updates.weight = data.weight;
@@ -231,6 +240,7 @@ export class JudgeService {
    */
   static async getJudgesByCertification(certification: string, organizationId?: string): Promise<Judge[]> {
     try {
+    const supabase = await createClient();
       let query = supabase
         .from('judges')
         .select('*')
@@ -261,6 +271,7 @@ export class JudgeService {
    */
   static async getJudgesBySpecialty(specialty: string, organizationId?: string): Promise<Judge[]> {
     try {
+    const supabase = await createClient();
       let query = supabase
         .from('judges')
         .select('*')
@@ -291,6 +302,7 @@ export class JudgeService {
    */
   static async searchJudges(query: string, organizationId?: string): Promise<Judge[]> {
     try {
+    const supabase = await createClient();
       let dbQuery = supabase
         .from('judges')
         .select('*')

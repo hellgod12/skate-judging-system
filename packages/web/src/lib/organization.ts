@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { Organization, CreateOrganizationData, UpdateOrganizationData } from './types/organization';
 
 export class OrganizationService {
@@ -7,6 +7,7 @@ export class OrganizationService {
    */
   static async getOrganizations(): Promise<Organization[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('organizations')
         .select('*')
@@ -29,6 +30,7 @@ export class OrganizationService {
    */
   static async getOrganizationById(id: string): Promise<Organization> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('organizations')
         .select('*')
@@ -52,6 +54,7 @@ export class OrganizationService {
    */
   static async getOrganizationBySlug(slug: string): Promise<Organization> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('organizations')
         .select('*')
@@ -75,6 +78,7 @@ export class OrganizationService {
    */
   static async createOrganization(data: CreateOrganizationData): Promise<Organization> {
     try {
+      const supabase = await createClient();
       const { data: organization, error } = await supabase
         .from('organizations')
         .insert({
@@ -112,6 +116,7 @@ export class OrganizationService {
    */
   static async updateOrganization(id: string, data: UpdateOrganizationData): Promise<Organization> {
     try {
+      const supabase = await createClient();
       const { data: organization, error } = await supabase
         .from('organizations')
         .update(data)
@@ -135,6 +140,7 @@ export class OrganizationService {
    */
   static async deleteOrganization(id: string): Promise<void> {
     try {
+      const supabase = await createClient();
       const { error } = await supabase
         .from('organizations')
         .update({ deleted_at: new Date().toISOString() })
@@ -179,6 +185,7 @@ export class OrganizationService {
    */
   static async getOrganizationMembersCount(id: string): Promise<number> {
     try {
+      const supabase = await createClient();
       const { count, error } = await supabase
         .from('users')
         .select('*', { count: 'exact', head: true })
@@ -200,6 +207,7 @@ export class OrganizationService {
    */
   static async getOrganizationEventsCount(id: string): Promise<number> {
     try {
+      const supabase = await createClient();
       const { count, error } = await supabase
         .from('events')
         .select('*', { count: 'exact', head: true })

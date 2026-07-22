@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { SystemSettings, CreateSettingsData, UpdateSettingsData, DEFAULT_SETTINGS } from './types/settings';
 
 export class SettingsService {
@@ -7,6 +7,7 @@ export class SettingsService {
    */
   static async getAllSettings(): Promise<SystemSettings[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('system_settings')
         .select('*')
@@ -28,6 +29,7 @@ export class SettingsService {
    */
   static async getSettingsByCategory(category: string): Promise<SystemSettings[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('system_settings')
         .select('*')
@@ -52,6 +54,7 @@ export class SettingsService {
    */
   static async getPublicSettings(): Promise<SystemSettings[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('system_settings')
         .select('*')
@@ -74,6 +77,7 @@ export class SettingsService {
    */
   static async getSettingByKey(key: string): Promise<SystemSettings | null> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('system_settings')
         .select('*')
@@ -109,6 +113,7 @@ export class SettingsService {
    */
   static async createSetting(data: CreateSettingsData): Promise<SystemSettings> {
     try {
+    const supabase = await createClient();
       const { data: setting, error } = await supabase
         .from('system_settings')
         .insert({
@@ -137,6 +142,7 @@ export class SettingsService {
    */
   static async updateSetting(key: string, data: UpdateSettingsData): Promise<SystemSettings> {
     try {
+    const supabase = await createClient();
       const { data: setting, error } = await supabase
         .from('system_settings')
         .update(data)
@@ -160,6 +166,7 @@ export class SettingsService {
    */
   static async deleteSetting(key: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('system_settings')
         .delete()
@@ -240,6 +247,7 @@ export class SettingsService {
    */
   static async batchUpdateSettings(updates: Record<string, any>): Promise<void> {
     try {
+      const supabase = await createClient();
       const operations = Object.entries(updates).map(([key, value]) =>
         supabase
           .from('system_settings')

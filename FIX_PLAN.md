@@ -1,384 +1,388 @@
 # FIX PLAN
-## Skate Judging System - Navigation Failure Resolution
+## Skate Judging System - Complete Architecture Cleanup
 
-**Date:** July 20, 2026
-**Based on:** ROOT_CAUSE_REPORT.md
-
----
-
-## CRITICAL FIXES (Must Complete First)
-
-### Fix 1: Login Page Navigation Failure
-**File:** `packages/web/src/app/auth/login/page.tsx`
-**Issue:** `window.location.replace('/dashboard')` not executing or being blocked
-**Root Cause:** Form submission interference or JavaScript error
-
-**Solution Options:**
-
-**Option A: Use Next.js Router (Recommended)**
-```typescript
-import { useRouter } from 'next/navigation';
-
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError('');
-  setIsLoading(true);
-
-  try {
-    await login(email, password);
-    router.push('/dashboard');
-    router.refresh(); // Force refresh to ensure middleware runs
-  } catch (err) {
-    setError(err instanceof Error ? err.message : 'Login failed');
-  } finally {
-    setIsLoading(false);
-  }
-};
-```
-
-**Option B: Use window.location.href with Delay**
-```typescript
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError('');
-  setIsLoading(true);
-
-  try {
-    await login(email, password);
-    // Small delay to ensure state updates
-    setTimeout(() => {
-      window.location.href = '/dashboard';
-    }, 100);
-  } catch (err) {
-    setError(err instanceof Error ? err.message : 'Login failed');
-  } finally {
-    setIsLoading(false);
-  }
-};
-```
-
-**Option C: Use form action attribute**
-```typescript
-<form onSubmit={handleSubmit} action="/dashboard">
-```
-
-**Selected Solution:** Option A (Next.js Router with refresh)
-
-**Implementation Steps:**
-1. Remove `window.location.replace('/dashboard')`
-2. Add `router.refresh()` after `router.push('/dashboard')`
-3. Remove debug logs (optional, can keep for now)
-4. Test navigation
+**Date:** July 21, 2026
+**Based on:** Comprehensive Audit Reports (8/8 phases completed)
 
 ---
 
-### Fix 2: Restore Dashboard Page
-**File:** `packages/web/src/app/dashboard/page.tsx`
-**Issue:** Currently simplified to `<h1>DASHBOARD WORKS</h1>`
-**Root Cause:** Simplified for debugging
+## IMPLEMENTATION PRINCIPLES
 
-**Solution:** Restore full dashboard with useAuth hook
+1. **No incremental fixes** - Single atomic patch
+2. **No temporary workarounds** - Permanent solutions only
+3. **No assumptions** - All changes verified from source
+4. **No debug code in production** - Remove or properly condition
+5. **No guessing** - Every change references actual source code
+
+---
+
+## CRITICAL FIXES (P0)
+
+### Fix 1: Remove vercel.json
+**File:** `vercel.json`
+**Issue:** Configuration mismatch causing deployment failure
+**Root Cause:** vercel.json `outputDirectory: ".next"` assumes Root Directory = packages/web, but this cannot be verified without Vercel Dashboard access
+**Solution:** Remove vercel.json entirely and configure entirely in Vercel Dashboard
+
+**Rationale:**
+- Vercel can auto-detect Next.js projects
+- Eliminates configuration ambiguity
+- Vercel Dashboard becomes single source of truth
+- Prevents path doubling issues
 
 **Implementation:**
-```typescript
-'use client';
-
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-export default function DashboardPage() {
-  const { user, logout, isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return <div>Not authenticated</div>;
-  }
-
-  const handleLogout = async () => {
-    await logout();
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold">Skate Judging Platform</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
-                {user?.display_name || `${user?.first_name} ${user?.last_name}`}
-              </span>
-              <Button variant="outline" onClick={handleLogout}>
-                Logout
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
-          <p className="text-gray-600">Welcome to the Skate Judging Platform</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Events</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">Manage your skateboarding events</p>
-              <Button className="w-full">View Events</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Riders</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">Manage rider profiles and registrations</p>
-              <Button className="w-full">View Riders</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Judges</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">Manage judge assignments and certifications</p>
-              <Button className="w-full">View Judges</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Categories</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">Manage competition categories and divisions</p>
-              <Button className="w-full">View Categories</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Organizations</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">Manage organization settings and branding</p>
-              <Button className="w-full">View Organizations</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">Configure system settings and preferences</p>
-              <Button className="w-full">View Settings</Button>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-    </div>
-  );
-}
+```bash
+Delete file: vercel.json
 ```
+
+**Verification:**
+- Configure in Vercel Dashboard:
+  - Root Directory: packages/web
+  - Build Command: npm run build
+  - Output Directory: .next
+  - Install Command: npm install
 
 ---
 
-## HIGH PRIORITY FIXES
-
-### Fix 3: Vercel Configuration
-**File:** `vercel.json` (new file)
-**Issue:** No explicit Vercel configuration
-**Root Cause:** Missing deployment configuration
-
-**Solution:** Add vercel.json at repository root
+### Fix 2: Remove Duplicate Database Trigger
+**File:** `database/schema-v4.sql`
+**Issue:** `update_run_attempts_updated_at` trigger defined twice (lines 2231 and 2292)
+**Root Cause:** Duplicate trigger creation
+**Solution:** Remove duplicate trigger at line 2292
 
 **Implementation:**
-```json
-{
-  "buildCommand": "npm run build",
-  "outputDirectory": "packages/web/.next",
-  "framework": "nextjs",
-  "installCommand": "npm install",
-  "devCommand": "npm run dev",
-  "rootDirectory": "."
-}
+```sql
+-- Remove lines 2290-2293 (duplicate trigger)
+-- DROP TRIGGER IF EXISTS update_run_attempts_updated_at ON run_attempts;
+-- CREATE TRIGGER update_run_attempts_updated_at BEFORE UPDATE ON run_attempts
+--   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+```
+
+**Verification:**
+- Schema should have only one trigger per table
+- No duplicate trigger creation errors
+
+---
+
+### Fix 3: Remove Duplicate RLS Policies
+**File:** `database/migrations/001_fix_users_rls.sql`
+**Issue:** RLS policies duplicated from schema-v4-final.sql
+**Root Cause:** Migration file duplicates policies already in schema
+**Solution:** Remove entire migration file (policies already in schema-v4-final.sql)
+
+**Implementation:**
+```bash
+Delete file: database/migrations/001_fix_users_rls.sql
+```
+
+**Verification:**
+- RLS policies defined in schema-v4-final.sql
+- No duplicate policy creation errors
+
+---
+
+## HIGH PRIORITY FIXES (P1)
+
+### Fix 4: Remove Debug Pages
+**Files:**
+- `packages/web/src/app/debug-attempts/page.tsx`
+- `packages/web/src/app/test/page.tsx`
+
+**Issue:** Debug endpoints exposed in production
+**Root Cause:** Debug pages left in production code
+**Solution:** Remove debug pages
+
+**Implementation:**
+```bash
+Delete files:
+- packages/web/src/app/debug-attempts/page.tsx
+- packages/web/src/app/test/page.tsx
 ```
 
 ---
 
-## LOW PRIORITY FIXES (Optional)
+### Fix 5: Remove Debug API Routes
+**Files:**
+- `packages/web/src/app/api/debug-riders/route.ts`
+- `packages/web/src/app/api/debug-attempts/route.ts`
+- `packages/web/src/app/api/diagnostics/route.ts`
 
-### Fix 4: Remove Debug Logs
-**Files:** Multiple files with console.log statements
-**Issue:** Debug logs cluttering production
-**Root Cause:** Added during debugging
+**Issue:** Debug API endpoints exposed in production
+**Root Cause:** Debug endpoints left in production code
+**Solution:** Remove debug API routes
 
-**Solution:** Remove or conditionally enable debug logs
+**Implementation:**
+```bash
+Delete files:
+- packages/web/src/app/api/debug-riders/route.ts
+- packages/web/src/app/api/debug-attempts/route.ts
+- packages/web/src/app/api/diagnostics/route.ts
+```
 
-**Files to Update:**
+---
+
+### Fix 6: Remove Debug Logging
+**Files:**
 - `packages/web/src/lib/auth.ts`
 - `packages/web/src/contexts/AuthContext.tsx`
 - `packages/web/src/middleware.ts`
-- `packages/web/src/app/auth/login/page.tsx`
-- `packages/web/src/app/dashboard/page.tsx`
 - `packages/web/src/lib/supabase.ts`
-- `packages/web/src/app/layout.tsx`
 
-**Implementation Strategy:**
+**Issue:** Extensive debug logging wrapped in NODE_ENV checks
+**Root Cause:** Debug code left in production files
+**Solution:** Remove all DEBUG flag checks and console.log statements
+
+**Implementation:**
+- Remove all `if (DEBUG) console.log(...)` statements
+- Remove all `if (process.env.NODE_ENV === 'development') console.log(...)` statements
+- Remove DEBUG constant from lib/auth.ts
+
+**Verification:**
+- No console.log statements in production code
+- No DEBUG flags
+- Cleaner, production-ready code
+
+---
+
+### Fix 7: Fix Tailwind Content Path
+**File:** `packages/web/tailwind.config.ts`
+**Issue:** Includes `./src/pages/**/*` but project uses App Router (no pages directory)
+**Root Cause:** Incorrect path configuration
+**Solution:** Remove pages directory from content paths
+
+**Implementation:**
 ```typescript
-// Add debug flag
-const DEBUG = process.env.NODE_ENV === 'development';
+// Before
+content: [
+  './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+  './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+  './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+]
 
-if (DEBUG) {
-  console.log("DEBUG MESSAGE");
+// After
+content: [
+  './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+  './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+]
+```
+
+---
+
+## MEDIUM PRIORITY FIXES (P2)
+
+### Fix 8: Archive Outdated Documentation
+**Files:**
+- `ARCHITECTURE_DOCUMENTATION_V3.md`
+- `ARCHITECTURE_DOCUMENTATION_V4.md`
+- `API_STRUCTURE_V3.md`
+- `API_STRUCTURE_V4.md`
+- `DEPLOYMENT_PLAN.md`
+- `MIGRATION_PLAN.md`
+- `TESTING_PLAN.md`
+
+**Issue:** Multiple documentation versions causing confusion
+**Root Cause:** Documentation bloat from incremental updates
+**Solution:** Create archive directory and move outdated files
+
+**Implementation:**
+```bash
+Create directory: docs/archive/
+Move files to docs/archive/
+```
+
+---
+
+### Fix 9: Archive Outdated Schema Files
+**Files:**
+- `database/schema-v2.sql`
+- `database/schema-v3.sql`
+- `database/schema-v4.sql` (keep schema-v4-final.sql as current)
+
+**Issue:** Multiple schema versions causing confusion
+**Root Cause:** Schema bloat
+**Solution:** Move to archive directory
+
+**Implementation:**
+```bash
+Create directory: database/archive/
+Move files to database/archive/
+```
+
+---
+
+## LOW PRIORITY FIXES (P3)
+
+### Fix 10: Centralize Profile Auto-Creation Logic
+**File:** `packages/web/src/lib/auth.ts`
+**Issue:** Profile auto-creation duplicated across login, register, refreshToken, getCurrentUser
+**Root Cause:** Code duplication
+**Solution:** Extract to private method `ensureUserProfileExists()`
+
+**Implementation:**
+```typescript
+private static async ensureUserProfileExists(user: any): Promise<User> {
+  // Extract common profile creation logic
+  // Call from login, register, refreshToken, getCurrentUser
 }
 ```
 
 ---
 
-### Fix 5: Add Error Boundaries
-**Files:** `packages/web/src/app/layout.tsx` and new error boundary component
-**Issue:** No error handling for component errors
-**Root Cause:** Missing error boundaries
-
-**Solution:** Add ErrorBoundary wrapper
-
-**Implementation:**
-```typescript
-// components/ErrorBoundary.tsx
-'use client';
-
-import React, { Component, ReactNode } from 'react';
-
-interface Props {
-  children: ReactNode;
-}
-
-interface State {
-  hasError: boolean;
-  error?: Error;
-}
-
-export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h1>
-            <p className="text-gray-600">{this.state.error?.message}</p>
-          </div>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-// Update layout.tsx
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        <ErrorBoundary>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </ErrorBoundary>
-      </body>
-    </html>
-  );
-}
-```
-
----
-
-### Fix 6: Optimize API Route Supabase Clients
-**Files:** All API route files
-**Issue:** Creating new Supabase instances in each route
-**Root Cause:** Not using singleton pattern
-
-**Solution:** Create shared Supabase client utility for API routes
+### Fix 11: Consolidate API Route Supabase Client Creation
+**Files:** All API route files (7 files)
+**Issue:** Inconsistent Supabase client creation pattern
+**Root Cause:** No shared utility for API routes
+**Solution:** Create shared server-side Supabase client utility
 
 **Implementation:**
 ```typescript
-// lib/api-supabase.ts
-import { createClient } from '@supabase/supabase-js';
+// Create: packages/web/src/lib/api-supabase.ts
+import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
-let apiSupabaseInstance: ReturnType<typeof createClient> | null = null;
+let apiSupabaseInstance: ReturnType<typeof createClient> | null = null
 
 export const getApiSupabase = () => {
   if (!apiSupabaseInstance) {
-    apiSupabaseInstance = createClient(supabaseUrl, supabaseAnonKey);
+    apiSupabaseInstance = createClient(supabaseUrl, supabaseAnonKey)
   }
-  return apiSupabaseInstance;
-};
+  return apiSupabaseInstance
+}
+
+// Update all API routes to use getApiSupabase()
 ```
+
+---
+
+## FILES TO BE DELETED
+
+### Critical
+- `vercel.json`
+- `database/migrations/001_fix_users_rls.sql`
+
+### High Priority
+- `packages/web/src/app/debug-attempts/page.tsx`
+- `packages/web/src/app/test/page.tsx`
+- `packages/web/src/app/api/debug-riders/route.ts`
+- `packages/web/src/app/api/debug-attempts/route.ts`
+- `packages/web/src/app/api/diagnostics/route.ts`
+
+### Medium Priority
+- `ARCHITECTURE_DOCUMENTATION_V3.md`
+- `ARCHITECTURE_DOCUMENTATION_V4.md`
+- `API_STRUCTURE_V3.md`
+- `API_STRUCTURE_V4.md`
+- `DEPLOYMENT_PLAN.md`
+- `MIGRATION_PLAN.md`
+- `TESTING_PLAN.md`
+- `database/schema-v2.sql`
+- `database/schema-v3.sql`
+- `database/schema-v4.sql`
+
+---
+
+## FILES TO BE MODIFIED
+
+### Critical
+- `database/schema-v4.sql` - Remove duplicate trigger (lines 2290-2293)
+
+### High Priority
+- `packages/web/src/lib/auth.ts` - Remove all DEBUG logging
+- `packages/web/src/contexts/AuthContext.tsx` - Remove all NODE_ENV console.log
+- `packages/web/src/middleware.ts` - Remove all NODE_ENV console.log
+- `packages/web/src/lib/supabase.ts` - Remove all NODE_ENV console.log
+- `packages/web/tailwind.config.ts` - Remove pages directory from content paths
+
+### Low Priority
+- `packages/web/src/lib/auth.ts` - Centralize profile auto-creation
+- Create `packages/web/src/lib/api-supabase.ts` - Shared API client utility
+- Update 7 API route files to use shared utility
+
+---
+
+## FILES TO BE CREATED
+
+### Medium Priority
+- `docs/archive/` - Directory for archived documentation
+- `database/archive/` - Directory for archived schemas
+
+### Low Priority
+- `packages/web/src/lib/api-supabase.ts` - Shared API client utility
 
 ---
 
 ## IMPLEMENTATION ORDER
 
-1. **Fix 1:** Login page navigation (CRITICAL)
-2. **Fix 2:** Restore dashboard page (CRITICAL)
-3. **Fix 3:** Vercel configuration (HIGH)
-4. **Fix 4:** Remove debug logs (LOW - optional)
-5. **Fix 5:** Add error boundaries (LOW - optional)
-6. **Fix 6:** Optimize API clients (LOW - optional)
+1. **Fix 1:** Remove vercel.json (CRITICAL)
+2. **Fix 2:** Remove duplicate trigger from schema-v4.sql (CRITICAL)
+3. **Fix 3:** Remove duplicate RLS policies migration (CRITICAL)
+4. **Fix 4:** Remove debug pages (HIGH)
+5. **Fix 5:** Remove debug API routes (HIGH)
+6. **Fix 6:** Remove debug logging (HIGH)
+7. **Fix 7:** Fix Tailwind content path (HIGH)
+8. **Fix 8:** Archive outdated documentation (MEDIUM)
+9. **Fix 9:** Archive outdated schema files (MEDIUM)
+10. **Fix 10:** Centralize profile auto-creation (LOW)
+11. **Fix 11:** Consolidate API route clients (LOW)
 
 ---
 
-## TESTING CHECKLIST
+## VERIFICATION CHECKLIST
 
-After implementing fixes:
+After implementing all fixes:
 
-- [ ] Login with valid credentials
-- [ ] Verify navigation to /dashboard completes
-- [ ] Verify middleware logs appear
-- [ ] Verify dashboard renders with user data
-- [ ] Verify logout works
-- [ ] Test protected routes redirect to login
-- [ ] Test auth routes redirect to dashboard when logged in
-- [ ] Verify session persistence after page refresh
-- [ ] Test in production build
-- [ ] Verify Vercel deployment uses correct configuration
+### Build Verification
+- [ ] npm run build succeeds
+- [ ] TypeScript compilation succeeds
+- [ ] No build errors
+- [ ] No build warnings
+
+### Runtime Verification
+- [ ] Login flow works
+- [ ] Navigation to dashboard works
+- [ ] Middleware executes correctly
+- [ ] Session persistence works
+- [ ] Logout works
+- [ ] Protected routes redirect correctly
+- [ ] Auth routes redirect correctly
+
+### Deployment Verification
+- [ ] Vercel deployment succeeds
+- [ ] No path doubling errors
+- [ ] Build output at correct location
+- [ ] Application loads in production
+
+### Code Quality Verification
+- [ ] No console.log in production code
+- [ ] No DEBUG flags
+- [ ] No debug pages accessible
+- [ ] No debug API routes accessible
+- [ ] Tailwind config correct
+- [ ] No duplicate database triggers
+- [ ] No duplicate RLS policies
 
 ---
 
 ## ROLLBACK PLAN
 
-If fixes introduce new issues:
+If fixes introduce issues:
 
-1. Revert to commit `9ff2659`
-2. Test alternative navigation approach (Option B or C)
-3. Incrementally apply fixes
-4. Test after each fix
+1. Revert to commit before fixes
+2. Apply fixes incrementally
+3. Test after each fix
+4. Identify problematic fix
+5. Adjust fix plan accordingly
+
+---
+
+## POST-IMPLEMENTATION CLEANUP
+
+After successful implementation:
+
+1. Update git history with descriptive commit message
+2. Clean up any remaining temporary files
+3. Update documentation to reflect current state
+4. Archive audit reports to docs/audit/
+5. Create deployment guide for Vercel Dashboard configuration

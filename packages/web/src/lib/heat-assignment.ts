@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { HeatAssignment, CreateHeatAssignmentData, UpdateHeatAssignmentData } from './types/heat-assignment';
 
 export class HeatAssignmentService {
@@ -7,6 +7,7 @@ export class HeatAssignmentService {
    */
   static async getHeatAssignments(heatId: string): Promise<HeatAssignment[]> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('heat_assignments')
         .select('*, riders(*)')
@@ -29,6 +30,7 @@ export class HeatAssignmentService {
    */
   static async getHeatAssignmentById(id: string): Promise<HeatAssignment> {
     try {
+      const supabase = await createClient();
       const { data, error } = await supabase
         .from('heat_assignments')
         .select('*')
@@ -51,6 +53,7 @@ export class HeatAssignmentService {
    */
   static async createHeatAssignment(data: CreateHeatAssignmentData): Promise<HeatAssignment> {
     try {
+      const supabase = await createClient();
       const { data: assignment, error } = await supabase
         .from('heat_assignments')
         .insert({
@@ -79,6 +82,7 @@ export class HeatAssignmentService {
    */
   static async updateHeatAssignment(id: string, data: UpdateHeatAssignmentData): Promise<HeatAssignment> {
     try {
+    const supabase = await createClient();
       const { data: assignment, error } = await supabase
         .from('heat_assignments')
         .update(data)
@@ -102,6 +106,7 @@ export class HeatAssignmentService {
    */
   static async deleteHeatAssignment(id: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('heat_assignments')
         .delete()
@@ -121,6 +126,7 @@ export class HeatAssignmentService {
    */
   static async autoAssignRiders(heatId: string, riderIds: string[], registrationIds: string[]): Promise<HeatAssignment[]> {
     try {
+      const supabase = await createClient();
       const assignments = riderIds.map((riderId, index) => ({
         heat_id: heatId,
         rider_id: riderId,
@@ -150,6 +156,7 @@ export class HeatAssignmentService {
    */
   static async reorderAssignments(heatId: string, assignmentIds: string[]): Promise<HeatAssignment[]> {
     try {
+      const supabase = await createClient();
       const updates = assignmentIds.map((id, index) =>
         supabase
           .from('heat_assignments')
@@ -171,6 +178,7 @@ export class HeatAssignmentService {
    */
   static async getRiderHeatAssignments(riderId: string, eventId: string): Promise<HeatAssignment[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('heat_assignments')
         .select('*, heats!inner(round_id), competition_rounds!inner(event_id)')
@@ -193,6 +201,7 @@ export class HeatAssignmentService {
    */
   static async clearHeatAssignments(heatId: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('heat_assignments')
         .delete()

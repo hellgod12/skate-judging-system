@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { createClient } from '@/utils/supabase/client';
 import type { Role, Permission, UserRole, CreateRoleData, UpdateRoleData, AssignRoleData } from './types/rbac';
 
 export class RBACService {
@@ -7,6 +7,7 @@ export class RBACService {
    */
   static async getPermissions(): Promise<Permission[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('permissions')
         .select('*')
@@ -28,6 +29,7 @@ export class RBACService {
    */
   static async getPermissionById(id: string): Promise<Permission> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('permissions')
         .select('*')
@@ -50,6 +52,7 @@ export class RBACService {
    */
   static async getRoles(organizationId?: string): Promise<Role[]> {
     try {
+    const supabase = await createClient();
       let query = supabase
         .from('roles')
         .select('*')
@@ -79,6 +82,7 @@ export class RBACService {
    */
   static async getRoleById(id: string): Promise<Role> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('roles')
         .select('*')
@@ -101,6 +105,7 @@ export class RBACService {
    */
   static async createRole(data: CreateRoleData): Promise<Role> {
     try {
+    const supabase = await createClient();
       const { data: role, error } = await supabase
         .from('roles')
         .insert({
@@ -139,6 +144,7 @@ export class RBACService {
    */
   static async updateRole(id: string, data: UpdateRoleData): Promise<Role> {
     try {
+      const supabase = await createClient();
       const updates: any = {};
       if (data.name) updates.name = data.name;
       if (data.description !== undefined) updates.description = data.description;
@@ -186,6 +192,7 @@ export class RBACService {
    */
   static async deleteRole(id: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('roles')
         .delete()
@@ -205,6 +212,7 @@ export class RBACService {
    */
   static async getUserRoles(userId: string): Promise<UserRole[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('user_roles')
         .select('*, roles(*)')
@@ -226,6 +234,7 @@ export class RBACService {
    */
   static async assignRole(data: AssignRoleData, assignedBy?: string): Promise<UserRole> {
     try {
+    const supabase = await createClient();
       const { data: userRole, error } = await supabase
         .from('user_roles')
         .insert({
@@ -253,6 +262,7 @@ export class RBACService {
    */
   static async removeRole(userRoleId: string): Promise<void> {
     try {
+    const supabase = await createClient();
       const { error } = await supabase
         .from('user_roles')
         .delete()
@@ -272,6 +282,7 @@ export class RBACService {
    */
   static async hasPermission(userId: string, permissionSlug: string): Promise<boolean> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('user_roles')
         .select('roles!inner(*)')
@@ -300,6 +311,7 @@ export class RBACService {
    */
   static async getUserPermissions(userId: string): Promise<Permission[]> {
     try {
+    const supabase = await createClient();
       const { data, error } = await supabase
         .from('user_roles')
         .select('roles!inner(permissions)')
@@ -333,6 +345,7 @@ export class RBACService {
    * Initialize default permissions
    */
   static async initializeDefaultPermissions(): Promise<void> {
+    const supabase = await createClient();
     const defaultPermissions = [
       // User management
       { name: 'View Users', slug: 'users.view', resource: 'users', action: 'view' },
@@ -404,6 +417,7 @@ export class RBACService {
    * Initialize default roles
    */
   static async initializeDefaultRoles(organizationId?: string): Promise<void> {
+    const supabase = await createClient();
     const defaultRoles = [
       {
         name: 'Admin',
