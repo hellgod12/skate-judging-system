@@ -1,5 +1,8 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "NEXT_PRIVATE_SKIP_WORKSPACE_CHECK"
+  ],
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
@@ -7,7 +10,8 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "outputs": []
     },
     "test": {
       "dependsOn": ["build"],
