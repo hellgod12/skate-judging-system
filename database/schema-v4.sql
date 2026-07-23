@@ -2289,9 +2289,6 @@ CREATE TRIGGER update_schedule_constraints_updated_at BEFORE UPDATE ON schedule_
 CREATE TRIGGER update_schedule_dependencies_updated_at BEFORE UPDATE ON schedule_dependencies
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_run_attempts_updated_at BEFORE UPDATE ON run_attempts
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 CREATE TRIGGER update_best_trick_attempts_updated_at BEFORE UPDATE ON best_trick_attempts
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
