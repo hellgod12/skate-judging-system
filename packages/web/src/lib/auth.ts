@@ -6,10 +6,8 @@ export class AuthService {
    * Login user with email and password
    */
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const supabase = createClient();
-    
     try {
-    const supabase = await createClient();
+      const supabase = await createClient();
       const { data, error } = await supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password,
